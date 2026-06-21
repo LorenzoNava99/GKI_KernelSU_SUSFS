@@ -1,0 +1,4 @@
+build/classes/
+build/app.unsigned.apk
+build/app.aligned.apk
+build/classes.dex

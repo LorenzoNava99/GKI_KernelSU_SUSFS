@@ -1,0 +1,215 @@
+{
+ "region": "linguistics",
+ "terms": [
+  {
+   "script": "PIE *kan(n)ab-",
+   "translit": "*kannab-",
+   "lang": "Proto-Indo-European",
+   "meaning": "hemp fiber / reed-like plant (reconstructed)",
+   "first": "pre-3000 BCE — reconstructed; no text",
+   "note": "Root source of both 'cannabis' (via Greek) and 'hemp' (via Proto-Germanic Grimm's Law)"
+  },
+  {
+   "script": "κάνναβις",
+   "translit": "kánnabis",
+   "lang": "Ancient Greek",
+   "meaning": "hemp / cannabis (no native Greek meaning — Scythian loan)",
+   "first": "c. 440 BCE — Herodotus, Histories IV.74–75",
+   "note": "Herodotus describes Scythians inhaling hemp-steam; earliest datable Western attestation of the root"
+  },
+  {
+   "script": "χασίς",
+   "translit": "chasís",
+   "lang": "Modern Greek",
+   "meaning": "hashish (borrowed from Arabic ḥashīsh)",
+   "first": "19th century CE — via European diffusion of Arabic term",
+   "note": "Later borrowing; not related to ancient kannabis"
+  },
+  {
+   "script": "حشيش",
+   "translit": "ḥashīsh",
+   "lang": "Arabic",
+   "meaning": "dried herb / fodder / cut grass (from root ḥ-sh-sh, 'to mow')",
+   "first": "c. 1123 CE as social label; 13th century CE as cannabis term — Fatimid epistle of Caliph al-Āmir",
+   "note": "Originally generic for any dried plant matter; narrowed to cannabis in medieval pharmacology and slang"
+  },
+  {
+   "script": "حشّاش / حشّاشين",
+   "translit": "hashshāsh / hashshāshīn",
+   "lang": "Arabic",
+   "meaning": "habitual hashish-user / hashish-eaters (agent noun + plural -īn)",
+   "first": "c. 1122–1123 CE — Fatimid political epistle (pejorative for Nizari Ismailis)",
+   "note": "Daftary argues this was a class-based insult ('rabble'), not a literal drug accusation; source of European 'assassin'"
+  },
+  {
+   "script": "بنگ / بنج",
+   "translit": "bang (Persian) / banj (Arabic)",
+   "lang": "Middle Persian → Arabic",
+   "meaning": "intoxicating narcotic hemp plant",
+   "first": "c. 3rd–7th century CE (Middle Persian Pahlavi texts); 9th century CE in Arabic (Ibn Sīnā)",
+   "note": "Arabicized as banj; cognate with Sanskrit bhanga; root possibly Avestan"
+  },
+  {
+   "script": "چرس",
+   "translit": "charas",
+   "lang": "Persian / Hindi-Urdu",
+   "meaning": "leather bag / wallet → hand-rubbed cannabis resin",
+   "first": "c. 16th century CE — Mughal-era Persianate Central Asia",
+   "note": "Metonym: container name became product name; may share origin with kīf via Persian کیف (bag)"
+  },
+  {
+   "script": "भङ्ग / भांग",
+   "translit": "bhanga (Skt.) / bhāṅg (Hindi)",
+   "lang": "Sanskrit → Hindi",
+   "meaning": "'breaking / that which breaks [the mind]'; possibly PIE root for hemp",
+   "first": "c. 1500–1000 BCE (disputed) — Atharvaveda lists bhanga as sacred anxiety-relieving plant",
+   "note": "Philological debate: whether Vedic bhanga = narcotic cannabis or another plant"
+  },
+  {
+   "script": "गांजा",
+   "translit": "gāñjā",
+   "lang": "Sanskrit / Hindi",
+   "meaning": "powerful cannabis preparation (dried flowering tops); possibly from PIE *gan- cognate with cannabis",
+   "first": "Classical Sanskrit; widely attested in Mughal-era texts",
+   "note": "Traveled via Indian indentured laborers to Caribbean (post-1838) → Jamaican Creole → global English"
+  },
+  {
+   "script": "विजया",
+   "translit": "vijayā",
+   "lang": "Sanskrit",
+   "meaning": "'she who conquers / the victorious one'",
+   "first": "c. 1st millennium CE — Ayurvedic and tantric literature",
+   "note": "Epithetic name for cannabis; associated with goddess Durga/Devi; also called samvid in tantric texts"
+  },
+  {
+   "script": "קְנֵה-בֹשֶׂם",
+   "translit": "qāneh-bōśem",
+   "lang": "Biblical Hebrew",
+   "meaning": "qāneh = 'reed/stalk'; bōśem = 'spice/balsam' → 'fragrant reed'",
+   "first": "Exodus 30:23 (c. 7th–5th century BCE composition); also Isaiah 43:24, Ezekiel 27:19",
+   "note": "Sula Benet (1936) argued this = cannabis; mainstream scholarship (Zohary 1982) identifies it as Acorus calamus. Disputed."
+  },
+  {
+   "script": "麻 / 大麻",
+   "translit": "má / dàmá",
+   "lang": "Classical Chinese / Modern Chinese",
+   "meaning": "má: 'hemp / numbing / tingly' (pictograph of stalks drying under roof); dàmá: 'great hemp'",
+   "first": "麻: pre-2000 BCE archaeological (fiber at Yangshao culture sites c. 4000 BCE); textual: Shennong Bencao Jing c. 100–200 CE",
+   "note": "The character 麻 independently encodes both the plant and numbness/tingling — reflecting perceived pharmacological effect"
+  },
+  {
+   "script": "اسرار",
+   "translit": "esrār",
+   "lang": "Ottoman Turkish (from Arabic)",
+   "meaning": "Arabic asrār = 'secrets / mysteries' (pl. of sirr, 'secret') → cannabis",
+   "first": "c. 15th–16th century CE in Ottoman divan poetry (Ḳayġusuz Abdal and later poets)",
+   "note": "Sufi mystical term repurposed as cannabis code-word; encodes spiritual-intoxicant equivalence in Ottoman literary culture"
+  },
+  {
+   "script": "كيف",
+   "translit": "kīf",
+   "lang": "Moroccan Arabic (Maghrebi)",
+   "meaning": "From Arabic kayf: 'well-being / pleasure / enjoyment / mood' → cannabis flowers (smoked with tobacco)",
+   "first": "c. 10th century CE introduction to Morocco; traditional cultivation in Rif mountains",
+   "note": "Source of French slang kiffer ('to really like'). Possibly also connected to Persian کیف ('bag/pouch') — debate ongoing."
+  }
+ ],
+ "entries": [
+  {
+   "y": "c. 440 BCE",
+   "t": "Scythian Word Enters the Western Record",
+   "b": "Herodotus transcribes the Scythian word kanab- as Greek kánnabis while describing Scythian hemp-steam rituals. This single transliteration is the earliest datable Western record of the cannabis root-word — the ancestor of both 'cannabis' and 'hemp' — linking steppe nomads to the entire European linguistic family.",
+   "themes": [
+    "ancient world",
+    "Greek",
+    "Scythian",
+    "ethnobotany",
+    "etymology"
+   ],
+   "src": "Herodotus, Histories IV.74–75 (c. 440 BCE)"
+  },
+  {
+   "y": "c. 1122–1123 CE",
+   "t": "Hashishi: From Slur to Legend",
+   "b": "Fatimid Caliph al-Āmir uses hashīshiyya as a political smear against Syrian Nizari Ismailis — the earliest dated appearance of the hashīsh- word family as a group label. Daftary (1994) shows this meant 'rabble/low-class,' not drug-users. Crusaders adopted the term phonetically, launching the word's journey to European 'assassin.'",
+   "themes": [
+    "Arabic",
+    "medieval Islam",
+    "Crusades",
+    "etymology",
+    "political language"
+   ],
+   "src": "Daftary, The Assassin Legends (I.B. Tauris, 1994); New World Encyclopedia"
+  },
+  {
+   "y": "c. 15th–16th century CE",
+   "t": "Ottoman Poets Code Hashish as 'The Secrets'",
+   "b": "Dervish poet Ḳayġusuz Abdal and Ottoman lyricists adopt esrār ('divine secrets/mysteries') as a literary euphemism for cannabis, encoding Sufi mystical theology into the drug's very name. By mid-16th century this semantic field is firmly established in Ottoman divan poetry — a unique case of a theological concept becoming a drug term.",
+   "themes": [
+    "Ottoman",
+    "Turkish",
+    "Sufism",
+    "poetry",
+    "semantics",
+    "euphemism"
+   ],
+   "src": "Academia.edu, 'Cannabis (esrār): A Unique Semantic Field in Classical Ottoman Lyric Poetry'"
+  },
+  {
+   "y": "1809 CE",
+   "t": "De Sacy Cements the Hashish-Assassin Myth",
+   "b": "French Orientalist Silvestre de Sacy presents his Mémoire linking 'assassin' to Arabic hashshāshīn before the Institut National, drawing on Marco Polo's legendary paradise-garden story (c. 1298). His authoritative framing locks the hashish-murder etymology into Western scholarship for nearly two centuries, until Daftary's 1994 deconstruction.",
+   "themes": [
+    "European orientalism",
+    "Arabic",
+    "etymology",
+    "colonial scholarship",
+    "myth"
+   ],
+   "src": "de Sacy, Mémoire (1809); Daftary, The Assassin Legends (1994)"
+  },
+  {
+   "y": "1936 / 1982 CE",
+   "t": "The Kaneh-Bosem Dispute: Cannabis in the Bible?",
+   "b": "Polish anthropologist Sula Benet argues that Hebrew qāneh-bōśem in Exodus 30:23 is cannabis, citing phonetic similarity between Semitic kanabos and Scythian cannabis. Botanist Michael Zohary (Plants of the Bible, 1982) counters that the plant is Acorus calamus. The unresolved debate recurs in every generation of cannabis scholarship.",
+   "themes": [
+    "Hebrew",
+    "Biblical",
+    "botanical identification",
+    "linguistics dispute",
+    "archaeology"
+   ],
+   "src": "Benet (1936, 1975); Zohary, Plants of the Bible (Cambridge, 1982); Cannabis Culture"
+  }
+ ],
+ "facts": [
+  {
+   "id": 1,
+   "fact": "Hemp and cannabis are the same word, reached English twice by different routes. Old English hænep (→ hemp) and Greek kánnabis (→ cannabis) both descend from the same Scythian root *kanab-, but hemp traveled through Proto-Germanic with Grimm's Law (k→h, b→p), while cannabis came via Greek and Latin unchanged. English got two words for one plant from one ancient source."
+  },
+  {
+   "id": 2,
+   "fact": "Turkish esrār means 'secrets.' It is the Arabic plural of sirr ('secret') — a core Sufi theological term. Ottoman dervish poets repurposed it as a coded name for cannabis, encoding the mystical-intoxicant equation into the very word. Most modern Turkish speakers have no idea 'secrets' once meant 'weed.'"
+  },
+  {
+   "id": 3,
+   "fact": "The 'assassins' may have been named for their poverty, not their drug habits. Farhad Daftary shows that hashīshī was a contemptuous Arabic term for the urban poor — people who could only afford cheap dried scraps (hashīsh = dried herb/fodder). Applied to Nizari Ismailis in 1122 CE as a class insult, it had no proven connection to drug use. Marco Polo's paradise-garden story, written 175 years later, is now considered literary embellishment."
+  },
+  {
+   "id": 4,
+   "fact": "Ganja traveled from Sanskrit to Jamaica in indentured laborers' luggage. South Asian workers brought gāñjā to the Caribbean after 1838; Jamaican Creole adopted it; reggae culture broadcast it globally. One Sanskrit word made a 150-year, 15,000-kilometer journey to become an international slang term."
+  },
+  {
+   "id": 5,
+   "fact": "The Chinese character 麻 (má, hemp/cannabis) is a mini-picture of drying hemp stalks: a roof (广) sheltering two stalks (木 + 木). The same character also means 'numb/tingly' — suggesting ancient Chinese speakers associated the plant directly with its physiological effect in naming it."
+  },
+  {
+   "id": 6,
+   "fact": "Moroccan kīf gave French teenagers a verb. Arabic kayf ('well-being/pleasure') → North African kīf (cannabis) → French slang kiffer ('to really like / to be into'). Classical Arabic philosophy of pleasurable states traveled through a Moroccan drug name into everyday Parisian speech."
+  },
+  {
+   "id": 7,
+   "fact": "Ancient Sanskrit distinguished fiber hemp from drug hemp. Proto-Indo-Iranian *śaṇa- meant industrial fiber hemp (ancestor of Sanskrit śaṇa) while bhanga meant narcotic hemp — a pharmacological distinction encoded in language at least 3,000 years ago, long before modern botany formally recognized Cannabis sativa varieties."
+  }
+ ]
+}

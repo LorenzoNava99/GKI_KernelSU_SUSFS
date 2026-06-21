@@ -1,0 +1,204 @@
+{
+ "charts": [
+  {
+   "id": "potency",
+   "title": "Cannabis-Resin (Hashish) Average THC Potency in Europe",
+   "unit": "%",
+   "type": "line",
+   "source": "Freeman et al. (2019) Addiction / EMCDDA–EUDA European Drug Reports 2023 & 2025",
+   "caveat": "Pooled multi-country mean of seized samples. 2006 and 2016 values are peer-reviewed; 2008 and 2010 are interpolated within Freeman's documented 'minimal-change' period and should not be cited as standalone precise figures. 2019 is mid-point of EMCDDA-reported 20–28% range.",
+   "data": [
+    {
+     "x": "2006",
+     "y": 8.1
+    },
+    {
+     "x": "2008",
+     "y": 8.5
+    },
+    {
+     "x": "2010",
+     "y": 9.5
+    },
+    {
+     "x": "2011",
+     "y": 10.0
+    },
+    {
+     "x": "2013",
+     "y": 12.5
+    },
+    {
+     "x": "2016",
+     "y": 17.2
+    },
+    {
+     "x": "2019",
+     "y": 24.0
+    },
+    {
+     "x": "2021",
+     "y": 24.0
+    },
+    {
+     "x": "2023",
+     "y": 23.0
+    }
+   ]
+  },
+  {
+   "id": "global_users",
+   "title": "Estimated Global Cannabis Users",
+   "unit": "millions",
+   "type": "line",
+   "source": "UNODC World Drug Reports 2022, 2023, 2024, 2025",
+   "caveat": "Estimates based on survey harmonization across 130+ countries. Methodology varies between report editions, so figures are not fully comparable year-to-year. Only five confirmed anchor points; do not interpolate intermediate years as precise figures.",
+   "data": [
+    {
+     "x": "2010",
+     "y": 170
+    },
+    {
+     "x": "2020",
+     "y": 209
+    },
+    {
+     "x": "2021",
+     "y": 219
+    },
+    {
+     "x": "2022",
+     "y": 228
+    },
+    {
+     "x": "2023",
+     "y": 244
+    }
+   ]
+  },
+  {
+   "id": "eu_resin_seizures_country",
+   "title": "EU Cannabis Resin Seizures by Country (2021)",
+   "unit": "tonnes",
+   "type": "bar",
+   "source": "EMCDDA European Drug Report 2023 (reporting 2021 data); EUDA trafficking-and-supply analysis",
+   "caveat": "Spain dominates because it is the primary EU entry point for Moroccan resin. Figures reflect reported seizures, not total trafficking volume. 2021 chosen as it has the most complete country breakdown.",
+   "data": [
+    {
+     "x": "Spain",
+     "y": 672.5
+    },
+    {
+     "x": "France",
+     "y": 72.5
+    },
+    {
+     "x": "Italy",
+     "y": 20.0
+    },
+    {
+     "x": "Other EU",
+     "y": 51.0
+    }
+   ]
+  },
+  {
+   "id": "eu_resin_seizures_trend",
+   "title": "Total EU Cannabis Resin Seizures (Trend)",
+   "unit": "tonnes",
+   "type": "bar",
+   "source": "EMCDDA/EUDA European Drug Reports 2023 (2021–2022 data) and 2025 (2023 data)",
+   "caveat": "Sharp 2022 drop driven largely by a 52% decrease in seizures reported by Spain. Slight recovery in 2023. All figures remain well below the 2021 peak.",
+   "data": [
+    {
+     "x": "2021",
+     "y": 816
+    },
+    {
+     "x": "2022",
+     "y": 468
+    },
+    {
+     "x": "2023",
+     "y": 551
+    }
+   ]
+  },
+  {
+   "id": "production_by_country",
+   "title": "Estimated Cannabis Resin Production by Country",
+   "unit": "tonnes (approximate)",
+   "type": "bar",
+   "source": "UNODC surveys: Morocco 2003 via UN Press; Morocco 2010 via UNODC crop-monitoring; Afghanistan via UNODC Cannabis Survey 2009/2010 (published 2010)",
+   "caveat": "HIGHLY UNCERTAIN — these are survey-based estimates, not measured output. Morocco 2003 is a historical peak; 2010 reflects post-crackdown decline. Afghanistan range is 1,500–3,500 t; midpoint (2,500) used here. No equivalent recent precision survey exists for 2020s. Do not present as exact current figures.",
+   "data": [
+    {
+     "x": "Morocco (2003, peak)",
+     "y": 3080
+    },
+    {
+     "x": "Morocco (2010)",
+     "y": 760
+    },
+    {
+     "x": "Afghanistan (~2009)",
+     "y": 2500
+    },
+    {
+     "x": "Lebanon (est. 2010s)",
+     "y": 300
+    }
+   ]
+  }
+ ],
+ "bignums": [
+  {
+   "value": 244,
+   "suffix": "M",
+   "label": "Global cannabis users (2023/24 estimate)",
+   "source": "UNODC World Drug Report 2025"
+  },
+  {
+   "value": 4.6,
+   "suffix": "%",
+   "label": "Share of global adults (15–64) using cannabis",
+   "source": "UNODC World Drug Report 2025"
+  },
+  {
+   "value": 23,
+   "suffix": "%",
+   "label": "Average THC in European hashish (2023)",
+   "source": "EUDA European Drug Report 2025"
+  },
+  {
+   "value": 8.1,
+   "suffix": "%",
+   "label": "Average THC in European hashish (2006)",
+   "source": "Freeman et al. (2019), Addiction — EMCDDA data"
+  },
+  {
+   "value": 551,
+   "suffix": "t",
+   "label": "Cannabis resin seized in EU (2023)",
+   "source": "EUDA European Drug Report 2025"
+  },
+  {
+   "value": 68,
+   "suffix": "%",
+   "label": "Share of EU resin seizures by Spain (2023)",
+   "source": "EUDA European Drug Report 2025"
+  },
+  {
+   "value": 43,
+   "suffix": "approx.",
+   "label": "Countries with some form of legal cannabis access (medical or recreational), as of 2024",
+   "source": "Legality of Cannabis — Wikipedia / news sources 2024; approximate figure, definitions vary"
+  },
+  {
+   "value": 1961,
+   "suffix": "",
+   "label": "Year cannabis was scheduled globally under UN Single Convention",
+   "source": "UN Single Convention on Narcotic Drugs, 1961"
+  }
+ ]
+}

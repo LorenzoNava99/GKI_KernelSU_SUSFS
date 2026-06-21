@@ -1,0 +1,255 @@
+{
+ "region": "myths",
+ "myths": [
+  {
+   "m": "The Assassins were called hashshashin because their leader drugged them with hashish to send them on killing missions",
+   "f": "The term was a pejorative insult by rivals meaning 'rabble'; no Ismaili source confirms hashish as a motivational tool. Marco Polo wrote 150 years after the fact.",
+   "cite": "Farhad Daftary, The Assassin Legends: Myths of the Isma'ilis (1994); Bernard Lewis, The Assassins (1967)"
+  },
+  {
+   "m": "Sheikh Haydar personally discovered hashish c. 1200 CE after a mystical encounter with hemp plants in a field",
+   "f": "Cannabis was in documented use in the Islamic world before Haydar; the story is a Sufi foundation myth serving to legitimize dervish hashish use",
+   "cite": "Franz Rosenthal, The Herb: Hashish versus Medieval Muslim Society (Brill, 1971)"
+  },
+  {
+   "m": "Herodotus's account of Scythians inhaling cannabis vapour was traveller's exaggeration",
+   "f": "Archaeological excavations at Pazyryk (1947) found hemp-seed burners in burial tents matching Herodotus's description almost exactly",
+   "cite": "Herodotus, Histories IV.73-75; Rudenko, Frozen Tombs of Siberia (1953)"
+  },
+  {
+   "m": "The Old Man of the Mountain was a single terrifying historical figure who controlled his followers with hashish",
+   "f": "The title was a Crusader composite applied to multiple Nizari leaders; the hashish-control story was anti-Ismaili propaganda with no credible historical basis",
+   "cite": "Daftary (1994); William of Tyre, Historia Rerum (c. 1184)"
+  },
+  {
+   "m": "Bhang is merely a secular intoxicant in Indian culture",
+   "f": "Bhang has 3,000+ years of sacred status in Hinduism; consumption at Maha Shivratri and Holi is considered a religious act connected to worship of Shiva",
+   "cite": "Atharvaveda XI.6 (c. 1200-1000 BCE); ethnobotanical literature"
+  },
+  {
+   "m": "Charles Baudelaire was an enthusiastic proponent of hashish and its spiritual possibilities",
+   "f": "Baudelaire ultimately condemned hashish as 'the weapon of suicide' that destroys the will while mimicking transcendence",
+   "cite": "Baudelaire, Les Paradis Artificiels (1860), Pt. V"
+  },
+  {
+   "m": "The word 'assassin' derives straightforwardly from 'hashish-eater', confirming the sect used the drug",
+   "f": "The etymology is disputed: hashshashin was also used as a general Arabic pejorative for 'rabble' or 'people of lax morals', not necessarily cannabis users",
+   "cite": "Bernard Lewis (1967); Daftary (1994); IIS.ac.uk"
+  }
+ ],
+ "extracts": [
+  {
+   "quote": "The Scythians take the seed of this hemp and, creeping under the felt coverings, throw it upon the red-hot stones; and, being so thrown, it smoulders and sends forth so much steam that no Greek vapour-bath could surpass it. The Scythians howl in their joy at the vapour-bath.",
+   "who": "Herodotus",
+   "work": "Histories",
+   "year": "c. 430 BCE",
+   "src": "Book IV, §75 (trans. A.D. Godley, Loeb Classical Library, 1920)"
+  },
+  {
+   "quote": "In a beautiful valley enclosed between two lofty mountains he had built a luxurious garden, stored with every delicious fruit and fragrant shrub that could be procured. Palaces of various sizes and forms were erected in different parts of the grounds, ornamented with works in gold, with paintings, and with furnishings of rich silks.",
+   "who": "Marco Polo",
+   "work": "The Travels of Marco Polo (Il Milione)",
+   "year": "c. 1298",
+   "src": "Book I, Ch. XXIII, trans. H. Yule & H. Cordier (1903)"
+  },
+  {
+   "quote": "He ate of the Banj until he lost his senses and thereupon it seemed to him that the bath walls had fallen down and the roof had flown off... and he stood a Sultan in his palace, with the grandees of the realm before him.",
+   "who": "Anon. (medieval Arabic)",
+   "work": "Tale of the Hashish-Eater, One Thousand and One Nights",
+   "year": "medieval (trans. 1885)",
+   "src": "Trans. Richard F. Burton, The Book of the Thousand Nights and a Night, Vol. X (1885)"
+  },
+  {
+   "quote": "The hemp plant is used as an intoxicating agent in a great variety of forms, by the Hindoos of all classes, from the monarch to the peasant... A tincture of the hemp resin I hold to be a most valuable addition to our list of genuine antispasmodics.",
+   "who": "W.B. O'Shaughnessy",
+   "work": "On the Preparations of the Indian Hemp, or Gunjah (Cannabis indica)",
+   "year": "1839",
+   "src": "Transactions of the Medical and Physical Society of Bengal, 1838-40, pp. 421-461"
+  },
+  {
+   "quote": "Aliénés et mangeurs de hachisch s'expriment de même quand ils veulent faire comprendre ce qu'ils ont éprouvé. [The insane and hashish-eaters express themselves similarly when they seek to convey what they have experienced.]",
+   "who": "Jacques-Joseph Moreau de Tours",
+   "work": "Du hachisch et de l'aliénation mentale: études psychologiques",
+   "year": "1845",
+   "src": "Paris: Fortin, Masson, 1845 (French original)"
+  },
+  {
+   "quote": "My body seemed to dissolve, and I became transparent. Within my breast I perceived the hashish I had eaten in the form of an emerald scintillating with a million points of fire... I was my own spirit and my body both at once.",
+   "who": "Théophile Gautier",
+   "work": "Le Club des Hachichins",
+   "year": "1846",
+   "src": "Revue des Deux Mondes, February 1, 1846 (trans. from French)"
+  },
+  {
+   "quote": "Wine exalts the will; hashish annihilates it. Wine is a physical support; hashish is the weapon of suicide... The man who takes resort to a poison in order to think will soon be unable to think without the poison.",
+   "who": "Charles Baudelaire",
+   "work": "Les Paradis Artificiels",
+   "year": "1860",
+   "src": "Paris: Poulet-Malassis et de Broise, 1860; 'Le Poème du haschisch', Pt. V (trans.)"
+  },
+  {
+   "quote": "My head expanded wider and wider, revolving with inconceivable rapidity, and enlarging in space with every revolution. It filled the room — the house — the city; it became a world, peopled with the shapes of men and monsters.",
+   "who": "Fitz Hugh Ludlow",
+   "work": "The Hasheesh Eater",
+   "year": "1857",
+   "src": "New York: Harper & Brothers, 1857, Ch. I"
+  },
+  {
+   "quote": "The years flew on; I heard the musical rush of their wings in the abyss outside of me, and from cycle to cycle, from life to life I careered, a mote in eternity and space.",
+   "who": "Fitz Hugh Ludlow",
+   "work": "The Hasheesh Eater",
+   "year": "1857",
+   "src": "New York: Harper & Brothers, 1857"
+  },
+  {
+   "quote": "So when the Old Man would have any Prince slain, he would say to such a youth: 'Go thou and slay So and So; and when thou returnest my Angels shall bear thee into Paradise. And shouldst thou die, natheless even so will I send my Angels to carry thee back into Paradise.'",
+   "who": "Marco Polo",
+   "work": "The Travels of Marco Polo",
+   "year": "c. 1298",
+   "src": "Book I, Ch. XXIII, trans. Yule & Cordier (1903)"
+  }
+ ],
+ "entries": [
+  {
+   "y": "c. 430 BCE",
+   "t": "Herodotus Documents Scythian Hemp Rites",
+   "b": "Greek historian Herodotus recorded in Book IV of his Histories the Scythian practice of inhaling cannabis vapour in felt-covered tents after funerals, producing ecstatic 'howling.' This is the earliest unambiguous written record of deliberate cannabis inhalation. Pazyryk burial excavations (1947) confirmed the practice with actual hemp-seed burners.",
+   "themes": [
+    "ancient rites",
+    "archaeology",
+    "primary source"
+   ],
+   "src": "Herodotus, Histories IV.73-75; Rudenko (1953)",
+   "image": {
+    "file": "Marco_Polo_traveling.JPG",
+    "caption": "Scythian territory overlapped with the steppe world Marco Polo later crossed; both cultures left vivid cannabis-related legacies",
+    "license": "Public domain"
+   }
+  },
+  {
+   "y": "c. 1090-1256 CE",
+   "t": "The Assassin Myth — Alamut and the Garden of Paradise",
+   "b": "From Hassan-i Sabbah's seizure of Alamut (1090) through the Mongol conquest (1256), European Crusaders and hostile Muslim rivals built the legend of hashish-drugged killers sent from a paradise-garden. Marco Polo's retelling (c. 1298) fixed the myth in Western culture for seven centuries, until Daftary's The Assassin Legends (1994) exposed it as propaganda.",
+   "themes": [
+    "myth-busting",
+    "Islamic history",
+    "propaganda",
+    "etymology"
+   ],
+   "src": "Daftary (1994); Marco Polo, Travels (c. 1298)",
+   "image": {
+    "file": "Alamut_Castle.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alamut_Castle.jpg",
+    "caption": "Ruins of Alamut Castle, Qazvin Province, Iran — headquarters of the Nizari Ismaili state and centre of the Assassin legend",
+    "license": "CC BY-SA 3.0"
+   }
+  },
+  {
+   "y": "1844-1849",
+   "t": "Club des Hashischins — Paris's Literary Hashish Circle",
+   "b": "At the Hôtel Pimodan on the Île Saint-Louis, Dr. Moreau de Tours hosted monthly hashish séances attended by Baudelaire, Gautier, Nerval, Delacroix, and Dumas. Members consumed dawamesk — hashish blended with spices and sugar — and recorded visions. The club generated key works of Romantic literature and early psychiatric research into drug-induced states.",
+   "themes": [
+    "literary history",
+    "19th-century France",
+    "Romanticism",
+    "psychopharmacology"
+   ],
+   "src": "Moreau de Tours (1845); Gautier, Revue des Deux Mondes (1846)",
+   "image": {
+    "file": "Baudelaire_par_Nadar.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Baudelaire_par_Nadar.jpg",
+    "caption": "Charles Baudelaire, photographed by Nadar (c. 1862), Club des Hashischins attendee and author of Les Paradis Artificiels (1860)",
+    "license": "Public domain"
+   }
+  },
+  {
+   "y": "1857",
+   "t": "Fitz Hugh Ludlow and America's First Drug Memoir",
+   "b": "American student Fitz Hugh Ludlow self-experimented with Tilden's cannabis extract and published The Hasheesh Eater (1857) — the first full-length American drug memoir. Its vivid accounts of temporal dissolution and spatial expansion created a popular craze for hashish in the United States and influenced a generation of writers and experimenters.",
+   "themes": [
+    "American literature",
+    "drug memoir",
+    "19th-century pharmacology"
+   ],
+   "src": "Ludlow, The Hasheesh Eater (1857)",
+   "image": {
+    "file": "Th%C3%A9ophile_Gautier_1857.JPG",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Th%C3%A9ophile_Gautier_1857.JPG",
+    "caption": "Théophile Gautier (1857), whose Club des Hashischins account preceded and influenced Ludlow's American memoir",
+    "license": "Public domain"
+   }
+  },
+  {
+   "y": "1860",
+   "t": "Baudelaire's Paradis Artificiels — Transcendence and Warning",
+   "b": "Charles Baudelaire drew on his Club des Hashischins experiences to write Les Paradis Artificiels (1860) — part phenomenology of hashish intoxication, part moral warning. Rejecting the Romantic enthusiasm of his peers, Baudelaire concluded that hashish offers only 'artificial' transcendence at the cost of the will — a landmark of both drug literature and French prose.",
+   "themes": [
+    "French literature",
+    "moral philosophy",
+    "drug culture",
+    "Romanticism"
+   ],
+   "src": "Baudelaire, Les Paradis Artificiels (Paris, 1860)",
+   "image": {
+    "file": "Baudelaire_par_Nadar.jpg",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Baudelaire_par_Nadar.jpg",
+    "caption": "Baudelaire photographed by Nadar, c. 1862 — two years after publishing his ambivalent masterpiece on hashish",
+    "license": "Public domain"
+   }
+  }
+ ],
+ "facts": [
+  "The word 'assassin' entered English, French, Italian, Spanish, and a dozen other languages from Arabic hashshashin — making it one of cannabis's most globally distributed linguistic legacies, however etymologically disputed.",
+  "Herodotus's 5th-century BCE account of Scythian cannabis steam tents was dismissed as legend for centuries; the 1947 Pazyryk excavations confirmed it almost exactly with physical hemp-seed burners.",
+  "The Club des Hashischins' dawamesk preparation combined hashish resin with cinnamon, cloves, nutmeg, pistachio, sugar, orange juice, butter — and sometimes Spanish fly (cantharides). Doses were served on Oriental porcelain.",
+  "Fitz Hugh Ludlow bought his cannabis from an ordinary pharmacy — Tilden's Extract of Cannabis Indica was a widely sold over-the-counter tincture in 19th-century America.",
+  "Bhang (cannabis in liquid form) remains legally sold at licensed government shops in several Indian states including Rajasthan and Uttar Pradesh, where it is a sacred offering at Maha Shivratri and Holi festivals.",
+  "Marco Polo almost certainly never visited Alamut; the castle was destroyed by Mongols in 1256, decades before his journey (c. 1271-1295). His Assassin account was second-hand at best.",
+  "Moreau de Tours is considered a forerunner of modern psychopharmacology — his 1845 proposal that hashish intoxication could model psychosis anticipated 20th-century psychedelic research by a century.",
+  "The Atharvaveda (c. 1200-1000 BCE) lists cannabis among five sacred plants, giving the Indian sacred cannabis tradition a documented literary history of over three millennia."
+ ],
+ "gallery": [
+  {
+   "file": "Marco_Polo_traveling.JPG",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Marco_Polo_traveling.JPG",
+   "caption": "Marco Polo travelling, from a 14th-century manuscript illumination. Polo's Assassin account spread the hashish-paradise myth across Europe.",
+   "credit": "Anonymous medieval miniaturist",
+   "license": "Public domain"
+  },
+  {
+   "file": "Alamut_Castle.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alamut_Castle.jpg",
+   "caption": "Alamut Castle ruins, Qazvin Province, Iran. Headquarters of the Nizari Ismailis (1090-1256) and centre of the Assassin legend.",
+   "credit": "Wikimedia Commons contributor",
+   "license": "CC BY-SA 3.0"
+  },
+  {
+   "file": "Alamut_Castel,_from_Hasan-e_Sabbah.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Alamut_Castel,_from_Hasan-e_Sabbah.jpg",
+   "caption": "View of the Alamut valley from the castle rock — the real landscape behind the paradise-garden myth.",
+   "credit": "Wikimedia Commons contributor",
+   "license": "Verify on Commons"
+  },
+  {
+   "file": "Baudelaire_par_Nadar.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Baudelaire_par_Nadar.jpg",
+   "caption": "Charles Baudelaire, photographed by Félix Nadar, Paris c. 1862. Author of Les Paradis Artificiels (1860) and Club des Hashischins attendee.",
+   "credit": "Félix Nadar (Félix Tournachon), 1862",
+   "license": "Public domain (pre-1931)"
+  },
+  {
+   "file": "Théophile_Gautier_1857.JPG",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Th%C3%A9ophile_Gautier_1857.JPG",
+   "caption": "Théophile Gautier (1857), whose 'Le Club des Hachichins' (Revue des Deux Mondes, 1846) is the most vivid literary account of the Paris hashish circle.",
+   "credit": "Unknown photographer, 1857",
+   "license": "Public domain (CC PD Mark 1.0)"
+  },
+  {
+   "file": "Gaetano_Previati_Le_fumatrici_di_hashish_Novara.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Gaetano_Previati_Le_fumatrici_di_hashish_Novara.jpg",
+   "caption": "Gaetano Previati, Le Fumatrici di Hashish ('The Hashish Smokers'), 1887, oil on canvas. A landmark of Symbolist/Orientalist cannabis imagery.",
+   "credit": "Gaetano Previati (1852-1920)",
+   "license": "Public domain (artist d. 1920) — verify exact file name on Commons"
+  }
+ ]
+}

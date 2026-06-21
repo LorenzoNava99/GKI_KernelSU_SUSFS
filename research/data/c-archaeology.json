@@ -1,0 +1,194 @@
+{
+ "region": "archaeology",
+ "entries": [
+  {
+   "y": "2021",
+   "t": "Cannabis Domesticated ~12,000 Years Ago in East Asia",
+   "b": "Whole-genome resequencing of 110 global cannabis accessions proved a single domestication event in early Neolithic East Asia, ~12,000 years ago. All fiber-hemp and drug-type cultivars share one ancestor, with the fiber/drug split occurring ~4,000 years ago through targeted gene selection.",
+   "themes": [
+    "genomics",
+    "domestication",
+    "science"
+   ],
+   "src": "Ren et al., Science Advances 7(29): eabg2286 (2021)",
+   "extract": "C. sativa was first domesticated in early Neolithic times in East Asia, ~12,000 years ago, and all current hemp and drug cultivars diverged from an ancestral gene pool still represented by feral plants in China."
+  },
+  {
+   "y": "2019",
+   "t": "Ritual Cannabis Smoking in the Pamir Mountains, 500 BCE",
+   "b": "GC-MS analysis of ten wooden braziers from Jirzankal Cemetery (eastern Pamirs, ~500 BCE) detected cannabinol (CBN) — the combustion product of THC — in nine braziers and on heated stones. The elevated CBN signal exceeded modern wild cannabis, implying selection for potent plants for funerary inhalation rituals at 3,000 m altitude.",
+   "themes": [
+    "residue analysis",
+    "ritual",
+    "science"
+   ],
+   "src": "Ren et al., Science Advances 5(6): eaaw1391 (2019)",
+   "extract": "Chemical residue evidence from the first millennium BCE in the Pamirs: earliest directly dated, scientifically verified evidence of ritual cannabis smoking.",
+   "image": {
+    "caption": "Pamir Plateau, Xinjiang — site of the Jirzankal Cemetery where 2,500-year-old wooden braziers tested positive for cannabinol via GC-MS",
+    "credit": "Wikimedia Commons",
+    "license": "Public domain",
+    "file": "Xinjiang_map.png",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Xinjiang_map.png"
+   }
+  },
+  {
+   "y": "2008",
+   "t": "The Yanghai Shaman's Stash: 789g of Ancient Cannabis, ~700 BCE",
+   "b": "A 2,700-year-old shaman's tomb at Yanghai, Turpan Basin, Xinjiang yielded 789 grams of cannabis packed in a wooden bowl — female flowering tops, no fiber goods present. Phytochemical and genetic analyses confirmed psychoactive drug-type cannabis, preserved by extreme desert aridity.",
+   "themes": [
+    "archaeobotany",
+    "shamanism",
+    "residue analysis"
+   ],
+   "src": "Russo et al., Journal of Experimental Botany 59(15): 4171–4182 (2008)",
+   "extract": "Yanghai tomb M90 contained the world's oldest confirmed cannabis psychoactive cache: 789g of female inflorescences with a shamanistic burial context."
+  },
+  {
+   "y": "2016",
+   "t": "Cannabis Burial Shroud at Jiayi Cemetery, ~2,500 BP",
+   "b": "Thirteen complete Cannabis sativa plants, dated 2,800–2,400 years old, were found laid as a burial shroud over a 35-year-old man in Jiayi Cemetery, Turpan. Flowering tops bore intact glandular trichomes indicating drug-type cannabis; no fiber use was identified — the first whole-plant cannabis find from any ancient site.",
+   "themes": [
+    "archaeobotany",
+    "burial",
+    "morphology"
+   ],
+   "src": "Clarke & Merlin, Economic Botany 70(3): 213–221 (2016)"
+  },
+  {
+   "y": "2020",
+   "t": "Cannabis on Iron Age Israelite Altars, Tel Arad, ~760–715 BCE",
+   "b": "GC-MS residue analysis of two limestone altars from Tel Arad's Iron Age shrine (Beer-sheba Valley, Israel) detected THC, CBD, CBN, and cannabis terpenes on the smaller altar, burned in animal dung. The frankincense-and-cannabis pairing suggests deliberate psychopharmacological ritual — the earliest cannabis evidence in the Ancient Near East.",
+   "themes": [
+    "residue analysis",
+    "ritual",
+    "Near East"
+   ],
+   "src": "Arie, Rosen & Namdar, Tel Aviv 47(1): 5–28 (2020)",
+   "image": {
+    "caption": "Tel Arad Israelite shrine (Iron Age, ~760–715 BCE), where GC-MS analysis of the altar surface revealed THC, CBD, and CBN residues",
+    "credit": "Wikimedia Commons, CC BY-SA 3.0",
+    "license": "CC BY-SA 3.0",
+    "file": "Tel_Arad_-_Israelite_shrine.JPG",
+    "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tel_Arad_-_Israelite_shrine.JPG"
+   }
+  },
+  {
+   "y": "2023",
+   "t": "Bronze Age Cannabis Seeds at Haimenkou, Yunnan, 1650–400 BCE",
+   "b": "Over 800 cannabis seeds from the waterlogged Bronze Age site of Haimenkou, Yunnan (1650–400 BCE) underwent morphometric analysis. Seeds fell between wild and domesticated types — cannabis caught in transition toward fiber or drug specialization, evidencing a regionally distinct SW Chinese domestication trajectory.",
+   "themes": [
+    "archaeobotany",
+    "domestication",
+    "morphometrics"
+   ],
+   "src": "Dal Martello et al., Vegetation History and Archaeobotany 33: 503–520 (2023)"
+  },
+  {
+   "y": "2026",
+   "t": "Cannabis as Core Crop: Phytolith Evidence from Shandong, 4,500–3,400 BP",
+   "b": "Phytolith analysis of 132 samples from two Shandong Neolithic settlements found cannabis in 68–72% of domestic contexts alongside millet and rice. Cannabis was not a marginal or ritual plant but a systematically cultivated staple crop deeply integrated into daily farming life 4,500 years ago — earlier than previously confirmed.",
+   "themes": [
+    "archaeobotany",
+    "phytolith",
+    "agriculture"
+   ],
+   "src": "Shandong University/CAS team, Journal of Archaeological Science (2026)"
+  },
+  {
+   "y": "2025",
+   "t": "Resurrecting 25-Million-Year-Old Cannabis Enzymes",
+   "b": "Wageningen University researchers computationally reconstructed and synthesized ancestral cannabinoid synthase enzymes predating the cannabis/hops divergence, 25+ million years ago. These ancient enzymes were biochemical generalists producing THCA, CBDA, and CBCA simultaneously; modern specialized THCAS and CBDAS arose via gene duplication and a four-residue loop insertion.",
+   "themes": [
+    "genomics",
+    "biochemistry",
+    "science"
+   ],
+   "src": "Villard, Baser et al., Plant Biotechnology Journal (2025), DOI: 10.1111/pbi.70475"
+  }
+ ],
+ "facts": [
+  {
+   "id": "f1",
+   "text": "The world's oldest cannabis stash — 789g in a Yanghai shaman's wooden bowl, ~700 BCE — predates the founding of Rome by over 200 years and remains greentinged after 2,700 years of Gobi Desert preservation."
+  },
+  {
+   "id": "f2",
+   "text": "Cannabis and hops (Humulus lupulus, used in brewing) share an ancestral enzyme from >25 million years ago — before they diverged into separate genera. Beer and cannabis share deep biochemical roots."
+  },
+  {
+   "id": "f3",
+   "text": "The Jirzankal braziers at 3,000 m elevation showed CBN signals stronger than modern wild cannabis. High-altitude UV radiation increases THC biosynthesis — the Pamir mountains may have been a natural 'potency amplifier.'"
+  },
+  {
+   "id": "f4",
+   "text": "At Tel Arad's 'holy of holies,' two altars were deliberately paired: one with cannabis (psychoactive), one with frankincense (which contains the anxiolytic incensole acetate) — a sophisticated 2,700-year-old guided-experience protocol."
+  },
+  {
+   "id": "f5",
+   "text": "Phytoliths are silica ghost-casts of plant cells. Cannabis phytoliths survived 4,500 years in Shandong agricultural soil where no seeds or fibers could have persisted — silica simply doesn't rot."
+  },
+  {
+   "id": "f6",
+   "text": "Every cannabis plant on Earth — from Oregon dispensaries to Indian charas to European hemp — traces to a single domestication event in Neolithic China ~12,000 years ago. One people, one place, one origin."
+  },
+  {
+   "id": "f7",
+   "text": "The 13 cannabis plants found as a burial shroud at Jiayi Cemetery, Turpan (2,500 BP) still had intact glandular trichomes — the microscopic structures that produce THC — visible under a microscope after 2,500 years in desert sand."
+  },
+  {
+   "id": "f8",
+   "text": "Shandong phytolith data found cannabis in >68% of domestic samples alongside millet and rice — suggesting cannabis was as ordinary and essential to Neolithic northern Chinese farmers as wheat is in a modern kitchen."
+  }
+ ],
+ "gallery": [
+  {
+   "id": "g1",
+   "file": "Cannabis_sativa_(Köhler).jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cannabis_sativa_%28K%C3%B6hler%29.jpg",
+   "caption": "Botanical plate of Cannabis sativa from Köhler's Medizinal-Pflanzen (1887), showing male/female anatomy and seed — the same plant domesticated in Neolithic East Asia ~12,000 years ago.",
+   "credit": "Hermann Adolf Köhler, 1887",
+   "license": "Public domain"
+  },
+  {
+   "id": "g2",
+   "file": "Tel_Arad_-_Israelite_shrine.JPG",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tel_Arad_-_Israelite_shrine.JPG",
+   "caption": "Tel Arad Israelite shrine, Beer-sheba Valley, Israel (~760–715 BCE). GC-MS of the smaller altar yielded THC, CBD, and CBN — the earliest cannabis evidence in the Ancient Near East (Arie et al., 2020).",
+   "credit": "Wikimedia Commons",
+   "license": "CC BY-SA 3.0"
+  },
+  {
+   "id": "g3",
+   "file": "Tel-arad-kanaanit-stadt-altar.JPG",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Tel-arad-kanaanit-stadt-altar.JPG",
+   "caption": "Limestone altar from Tel Arad, Israel. Paired altars in the shrine's inner sanctum held cannabis and frankincense respectively — an intentional dual-drug ritual arrangement.",
+   "credit": "Wikimedia Commons",
+   "license": "CC BY-SA 4.0"
+  },
+  {
+   "id": "g4",
+   "file": "Cannabis_sativa_001.JPG",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Cannabis_sativa_001.JPG",
+   "caption": "Living Cannabis sativa plant. All modern varieties are descendants of a single Neolithic domestication ~12,000 years ago in East Asia, confirmed by whole-genome resequencing of 110 global accessions (Ren et al., 2021).",
+   "credit": "Wikimedia Commons",
+   "license": "CC BY-SA 3.0"
+  },
+  {
+   "id": "g5",
+   "file": "Xinjiang_map.png",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Xinjiang_map.png",
+   "caption": "Map of Xinjiang, China — home to Jirzankal (500 BCE braziers), Yanghai (2,700-year-old shaman's stash), and Jiayi (2,500-year-old cannabis burial shroud) — the richest region on Earth for ancient cannabis archaeology.",
+   "credit": "Wikimedia Commons",
+   "license": "Public domain"
+  },
+  {
+   "id": "g6",
+   "file": "Fuchscannabis.jpg",
+   "url": "https://commons.wikimedia.org/wiki/Special:FilePath/Fuchscannabis.jpg",
+   "caption": "Woodcut of cannabis from Leonhart Fuchs's De Historia Stirpium (1542) — one of the first printed European botanical records, made as living oral traditions of cannabis use stretched unbroken from Neolithic Asia to the Renaissance.",
+   "credit": "Leonhart Fuchs, De Historia Stirpium, 1542",
+   "license": "Public domain"
+  }
+ ]
+}

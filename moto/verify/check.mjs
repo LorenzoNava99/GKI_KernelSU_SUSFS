@@ -161,7 +161,7 @@ try {
   const w3 = M.World.create({ scene, env, bikeGroup: bike3, stats: catalog[0], ai: true });
   ok("AI enabled in world", w3.ai === true);
   let laneChanges = 0, prevLanes = new Map();
-  for (let i = 0; i < 1200; i++) {
+  for (let i = 0; i < 3500; i++) {
     w3.update(1 / 60, { steer: Math.sin(i / 25) * 0.5, throttle: 1, brake: 0 });
     for (const o of w3.traffic) { if (prevLanes.has(o) && prevLanes.get(o) !== o.targetLane) laneChanges++; prevLanes.set(o, o.targetLane); }
     if (w3.crashed) break;

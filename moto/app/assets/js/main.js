@@ -132,14 +132,16 @@
     if (!_camTarget) _camTarget = new THREE.Vector3();
     var px = world.playerX || 0;
     var speed01 = Math.min(1, world.speed / 90);
-    camShake = world.crashed ? 0 : (0.05 * speed01);
+    camShake = world.crashed ? 0 : (0.03 * speed01);
     var sx = (Math.random() - 0.5) * camShake;
     var sy = (Math.random() - 0.5) * camShake;
-    var desired = new THREE.Vector3(px * 0.55 + sx, 4.4 + sy, 9.2 + speed01 * 1.2);
+    // closer, lower chase cam so the bike reads large; modest FOV so the world
+    // isn't fish-eyed and the horizon/sky sit naturally high in frame.
+    var desired = new THREE.Vector3(px * 0.5 + sx, 3.3 + sy, 7.2 + speed01 * 1.1);
     camera.position.lerp(desired, Math.min(1, dt * 6));
-    _camTarget.set(px * 0.75, 1.4, -14);
+    _camTarget.set(px * 0.6, 1.0, -16);
     camera.lookAt(_camTarget);
-    camera.fov = 74 + speed01 * 10;
+    camera.fov = 60 + speed01 * 6;
     camera.updateProjectionMatrix();
   }
 
@@ -235,6 +237,7 @@
     gfx = MOTO.Render.create();
     gfx.init(canvas, save.settings).then(function () {
       scene = gfx.scene; camera = gfx.camera;
+      try { MOTO._renderer = gfx.renderer; } catch (e) {} // env uses it for PMREM/IBL
       gfx.resize(window.innerWidth, window.innerHeight);
       window.addEventListener("resize", function () { gfx.resize(window.innerWidth, window.innerHeight); });
       document.addEventListener("visibilitychange", function () {
@@ -248,7 +251,11 @@
     });
   }
 
-  MOTO.App = { boot: boot, _save: function () { return save; } };
+  MOTO.App = {
+    boot: boot,
+    _save: function () { return save; },
+    _debug: function () { return { state: state, world: world, env: env, scene: scene, camera: camera, gfx: gfx }; }
+  };
 
   if (document.readyState === "complete" || document.readyState === "interactive") {
     setTimeout(boot, 0);

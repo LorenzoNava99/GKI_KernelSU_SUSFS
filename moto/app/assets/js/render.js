@@ -12,9 +12,9 @@
   // quality presets: internal pixel-ratio bounds + shadow + effect budget.
   // dpr is multiplied by these; adaptive res moves between min..max to hold fps.
   var PRESETS = {
-    perf:     { rmin: 0.55, rmax: 0.9,  shadow: 1024, bloom: 0.6, ao: false, traa: false, target: 120 },
-    balanced: { rmin: 0.7,  rmax: 1.25, shadow: 2048, bloom: 0.8, ao: true,  traa: true,  target: 120 },
-    ultra:    { rmin: 0.85, rmax: 1.8,  shadow: 4096, bloom: 1.0, ao: true,  traa: true,  target: 90  }
+    perf:     { rmin: 0.55, rmax: 0.9,  shadow: 1024, bloom: 0.22, ao: false, traa: false, target: 120 },
+    balanced: { rmin: 0.7,  rmax: 1.25, shadow: 2048, bloom: 0.32, ao: true,  traa: true,  target: 120 },
+    ultra:    { rmin: 0.85, rmax: 1.8,  shadow: 4096, bloom: 0.45, ao: true,  traa: true,  target: 90  }
   };
   var MAX_BUFFER_DIM = 3840;
 
@@ -95,7 +95,7 @@
         lit = aoPass.getTextureNode().mul(color);
       }
       var outNode = lit;
-      if (GFX.bloom) outNode = lit.add(GFX.bloom(lit, p.bloom, 0.5, 0.82)); // high threshold: only bright pixels bloom
+      if (GFX.bloom) outNode = lit.add(GFX.bloom(lit, p.bloom, 0.6, 0.9)); // high threshold: only bright pixels bloom
       post.outputNode = outNode;
       this.post = post; this._scenePass = scenePass;
       this._pipeline = wantAO ? "ao+bloom" : "bloom";
@@ -107,7 +107,7 @@
       var post2 = new THREE.PostProcessing(this.renderer);
       var sp2 = TSL.pass(this.scene, this.camera);
       var o2 = sp2;
-      if (GFX.bloom) o2 = sp2.add(GFX.bloom(sp2, p.bloom, 0.5, 0.82));
+      if (GFX.bloom) o2 = sp2.add(GFX.bloom(sp2, p.bloom, 0.6, 0.9));
       post2.outputNode = o2;
       this.post = post2; this._scenePass = sp2; this._pipeline = "bloom";
       return;

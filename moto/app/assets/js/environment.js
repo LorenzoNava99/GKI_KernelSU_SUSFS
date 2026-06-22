@@ -46,29 +46,9 @@
   var Z_SPAN = Z_RECYCLE - Z_FAR; // total scroll length 300
 
   // ---- Visual curvature -----------------------------------------------------
-  // The world bends as a smooth function of "world z" = scenery position + the
-  // total distance travelled. Two low-frequency sines combine into a lazy,
-  // non-repeating, non-nauseating sweep; a third drives gentle elevation crests.
-  // Only env geometry uses these; gameplay coordinates never see them.
-  var CURVE_AMP = 0.016;   // lateral bend strength (m of x per m of z, scaled below)
-  var CREST_AMP = 0.9;     // vertical crest amplitude (m)
-  function curveX(worldZ) {
-    // farther ahead (more negative z) bends more — quadratic-ish in distance
-    var s = worldZ * 0.0042;
-    var bend = Math.sin(s) * 0.7 + Math.sin(s * 0.37 + 1.3) * 0.3;
-    // amplify with depth so the road visibly peels away toward the horizon
-    return bend * CURVE_AMP * worldZ * worldZ * 0.05;
-  }
-  function curveY(worldZ) {
-    var s = worldZ * 0.0061 + 2.1;
-    return (Math.sin(s) * 0.6 + Math.sin(s * 0.43) * 0.4) * CREST_AMP - CREST_AMP * 0.2;
-  }
-  // local yaw so long meshes/props align with the tangent of the curve
-  function curveYaw(worldZ) {
-    var dz = 4;
-    var dx = curveX(worldZ - dz) - curveX(worldZ + dz);
-    return Math.atan2(dx, 2 * dz);
-  }
+  // Bounded gentle road bend; the actual functions live inside create() so they
+  // can evolve with distance travelled. See curveX/curveY/curveYaw there.
+  var CURVE_MAX = 8;       // hard cap on lateral bend (m) — the road never breaks
 
   // ---- Themes ---------------------------------------------------------------
   // skyTop / skyHorizon drive the procedural sky used for both background and
@@ -128,6 +108,22 @@
     inst.laneCenters = LANE_CENTERS.slice();
 
     var theme = themeById(themeId);
+    var travelled = 0;       // total distance scrolled — drives the evolving bend
+
+    // Bounded, evolving road curve: ~0 at the player, bending gently ahead, hard
+    // -capped so geometry never flies off; direction slowly evolves as you drive.
+    function curveX(worldZ) {
+      var d = worldZ < 0 ? -worldZ : 0;            // metres ahead of the player
+      var mag = d * d * 0.0004; if (mag > CURVE_MAX) mag = CURVE_MAX;
+      var s = (travelled + d) * 0.0011;            // absolute position along road
+      var dir = Math.sin(s) * 0.8 + Math.sin(s * 0.47 + 1.3) * 0.2;
+      return dir * mag;
+    }
+    function curveY() { return 0; }                // flat — no vertical crests
+    function curveYaw(worldZ) {
+      var dz = 5;
+      return Math.atan2(curveX(worldZ - dz) - curveX(worldZ + dz), 2 * dz);
+    }
 
     // Track everything we add to scene + every geometry/material for clean dispose.
     var added = [];
@@ -168,7 +164,46 @@
     var pmrem = null;
     var envRT = null;          // current PMREMGenerator render target
     var skyCanvas = null;      // reusable canvas for the gradient sky
-    var skyTexture = null;
+    var skyTexture = null;     // equirect sky for PMREM reflections
+    var skyBgTex = null;       // tall gradient used as the visible sky backdrop
+
+    function hexOf(n) { return "#" + ("000000" + (((n >>> 0) & 0xffffff)).toString(16)).slice(-6); }
+    function mixHex(a, b, t) {
+      var ar = (a >> 16) & 255, ag = (a >> 8) & 255, ab = a & 255;
+      var br = (b >> 16) & 255, bg = (b >> 8) & 255, bb = b & 255;
+      var r = Math.round(ar + (br - ar) * t), g = Math.round(ag + (bg - ag) * t), bl = Math.round(ab + (bb - ab) * t);
+      return "#" + ("000000" + ((((r << 16) | (g << 8) | bl)) >>> 0).toString(16)).slice(-6);
+    }
+
+    // A tall vertical gradient (sky top -> horizon) with a soft sun glow, used as
+    // scene.background so the upper screen shows a real sky instead of flat colour.
+    function makeSkyBg(t) {
+      try {
+        if (typeof document === "undefined" || !document.createElement) return null;
+        var cnv = document.createElement("canvas");
+        if (!cnv) return null;
+        cnv.width = 64; cnv.height = 512;
+        var ctx = cnv.getContext && cnv.getContext("2d");
+        if (!ctx) return null;
+        var grad = ctx.createLinearGradient(0, 0, 0, 512);
+        grad.addColorStop(0.0, hexOf(t.skyTop));
+        grad.addColorStop(0.45, mixHex(t.skyTop, t.skyHorizon, 0.55));
+        grad.addColorStop(0.7, hexOf(t.skyHorizon));
+        grad.addColorStop(1.0, mixHex(t.skyHorizon, t.ground, 0.25));
+        ctx.fillStyle = grad; ctx.fillRect(0, 0, 64, 512);
+        // sun glow near the horizon, biased to the sun side
+        var sx = (t.sunDir && t.sunDir[0] < 0) ? 16 : 48;
+        var sg = ctx.createRadialGradient(sx, 165, 3, sx, 165, 150);
+        sg.addColorStop(0, "rgba(255,251,238,0.95)");
+        sg.addColorStop(0.35, "rgba(255,242,214,0.4)");
+        sg.addColorStop(1, "rgba(255,242,214,0)");
+        ctx.fillStyle = sg; ctx.fillRect(0, 0, 64, 512);
+        var tex = new THREE.CanvasTexture(cnv);
+        if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+        tex.needsUpdate = true;
+        return tex;
+      } catch (e) { return null; }
+    }
 
     function makeSkyTexture(t) {
       try {
@@ -263,10 +298,11 @@
     var curbMat = mat(new THREE.MeshStandardMaterial({ color: 0xc4c4ca, roughness: 0.85 }));
     var railMat = mat(new THREE.MeshStandardMaterial({ color: 0xd8dbe0, roughness: 0.3, metalness: 0.85, envMapIntensity: 1.2 }));
     var railPostMat = mat(new THREE.MeshStandardMaterial({ color: 0x7c848c, roughness: 0.6, metalness: 0.5 }));
-    // Lane markings: emissive so bloom blooms them.
-    var lineWhiteMat = mat(new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xf6f6ee, emissiveIntensity: 0.85, roughness: 0.5, metalness: 0 }));
-    var lineEdgeMat = mat(new THREE.MeshStandardMaterial({ color: 0xffe24a, emissive: 0xffcf2a, emissiveIntensity: 0.8, roughness: 0.5, metalness: 0 }));
-    var studMat = mat(new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xbfe6ff, emissiveIntensity: 1.4, roughness: 0.2, metalness: 0.6 }));
+    // Lane markings: bright but only LIGHTLY emissive so they read as crisp
+    // painted lines, not glowing bloom-blobs.
+    var lineWhiteMat = mat(new THREE.MeshStandardMaterial({ color: 0xf4f4ee, emissive: 0xf4f4ee, emissiveIntensity: 0.12, roughness: 0.55, metalness: 0 }));
+    var lineEdgeMat = mat(new THREE.MeshStandardMaterial({ color: 0xf2d23a, emissive: 0xf2d23a, emissiveIntensity: 0.12, roughness: 0.55, metalness: 0 }));
+    var studMat = mat(new THREE.MeshStandardMaterial({ color: 0xeaf4ff, emissive: 0xbfe6ff, emissiveIntensity: 0.5, roughness: 0.3, metalness: 0.4 }));
     var accentMat = mat(new THREE.MeshStandardMaterial({ color: theme.accent, roughness: 0.8 }));
     // Animated specular water.
     var waterMat = mat(new THREE.MeshStandardMaterial({
@@ -468,7 +504,7 @@
       bldg2: mat(new THREE.MeshStandardMaterial({ color: 0x6f7a86, roughness: 0.7, metalness: 0.15 })),
       bldg3: mat(new THREE.MeshStandardMaterial({ color: 0xa9b4c0, roughness: 0.55, metalness: 0.2 })),
       glass: mat(new THREE.MeshStandardMaterial({ color: 0x8fbfe0, roughness: 0.12, metalness: 0.6, envMapIntensity: 1.4 })),
-      windows: mat(new THREE.MeshStandardMaterial({ color: 0x222a33, emissive: 0xffd58a, emissiveIntensity: 0.9, roughness: 0.4 })),
+      windows: mat(new THREE.MeshStandardMaterial({ color: 0x2a3340, emissive: 0xffd58a, emissiveIntensity: 0.35, roughness: 0.4 })),
       lampPost: mat(new THREE.MeshStandardMaterial({ color: 0x33383e, roughness: 0.6, metalness: 0.4 })),
       lampHead: mat(new THREE.MeshStandardMaterial({ color: 0xfff4c0, emissive: 0xffdd88, emissiveIntensity: 1.6, roughness: 0.4 })),
       tower: mat(new THREE.MeshStandardMaterial({ color: 0xc94a38, roughness: 0.5, metalness: 0.35 })),
@@ -646,8 +682,10 @@
         var side = sides[s];
         for (var n = 0; n < PROPS_PER_SIDE; n++) {
           var grp = builder(propRng);
-          var baseOff = EDGE_X + SHOULDER + 2.5;
-          var spread = 2 + propRng() * 26;
+          // keep props clear of the road corridor: even an 8 m-wide mesa (half 4)
+          // must not clip the 5.4 m road edge, so start well out and spread further.
+          var baseOff = EDGE_X + SHOULDER + 8;       // ~14.8 m from centre
+          var spread = propRng() * 20;
           var bx = side * (baseOff + spread);
           var pz = Z_RECYCLE - (n + 0.5) * (Math.abs(Z_SPAN) / PROPS_PER_SIDE) - propRng() * 6;
           grp.userData.z = pz;
@@ -665,11 +703,15 @@
 
     // ---- Apply palette ------------------------------------------------------
     function applyPalette(t) {
+      // visible sky: a vertical gradient backdrop with a sun (replaces flat colour)
       try {
-        if (scene.background && scene.background.setHex) scene.background.setHex(t.sky);
-        else scene.background = new THREE.Color(t.sky);
-      } catch (e) { scene.background = new THREE.Color(t.sky); }
-      scene.fog = new THREE.Fog(t.fog, t.fogNear, t.fogFar);
+        if (skyBgTex && skyBgTex.dispose) skyBgTex.dispose();
+        skyBgTex = makeSkyBg(t);
+        scene.background = skyBgTex || new THREE.Color(t.skyHorizon);
+      } catch (e) { try { scene.background = new THREE.Color(t.skyHorizon); } catch (e2) {} }
+      // fog tinted to the horizon so distant scenery melts into the sky (not mud),
+      // and pushed far back so the world is actually visible.
+      scene.fog = new THREE.Fog(t.skyHorizon, 110, 720);
       if (groundMat.color && groundMat.color.setHex) groundMat.color.setHex(t.ground);
       if (roadMat.color && roadMat.color.setHex) roadMat.color.setHex(t.road);
       if (typeof t.roadRough === "number") roadMat.roughness = t.roadRough;
@@ -699,7 +741,6 @@
 
     // ---- update -------------------------------------------------------------
     var waterPhase = 0;
-    var travelled = 0;       // accumulates so curvature flows toward the player
 
     function recycleAndCurve(list, span, recycleZ, dz) {
       for (var j = 0; j < list.length; j++) {
@@ -781,6 +822,8 @@
       // tear down IBL artifacts
       try { if (envRT && envRT.dispose) envRT.dispose(); } catch (e) {}
       try { if (skyTexture && skyTexture.dispose) skyTexture.dispose(); } catch (e) {}
+      try { if (skyBgTex && skyBgTex.dispose) skyBgTex.dispose(); } catch (e) {}
+      try { scene.background = null; } catch (e) {}
       try { if (pmrem && pmrem.dispose) pmrem.dispose(); } catch (e) {}
       for (var di = 0; di < disposables.length; di++) {
         try { if (disposables[di] && disposables[di].dispose) disposables[di].dispose(); } catch (e) {}

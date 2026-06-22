@@ -12,6 +12,15 @@
   function pick(arr) { return arr[(Math.random() * arr.length) | 0]; }
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
+  // spin a model's wheels (models expose group.userData.wheels = [meshes]) about
+  // their local X axle, by the given angle delta (radians).
+  function rollWheels(group, da) {
+    if (!group || !group.userData) return;
+    var ws = group.userData.wheels;
+    if (!ws || !ws.length) return;
+    for (var i = 0; i < ws.length; i++) { if (ws[i] && ws[i].rotation) ws[i].rotation.x += da; }
+  }
+
   function World(opts) {
     this.scene = opts.scene;
     this.env = opts.env;
@@ -89,6 +98,7 @@
       this.bike.rotation.z = -clamp(this.playerVX / this.handling, -1, 1) * 0.32; // lean
       this.bike.rotation.y = -clamp(this.playerVX / this.handling, -1, 1) * 0.12;
       this.bike.position.y = Math.sin(this._t * 22) * 0.012; // vibration
+      rollWheels(this.bike, this.speed * dt / 0.34);
     }
 
     // ---- spawn traffic ----
@@ -122,6 +132,7 @@
       var closing = this.speed - ev; // m/s, player overtakes slower traffic
       o.z += closing * dt;
       o.group.position.z = o.z;
+      rollWheels(o.group, ev * dt / 0.36);
       // collision (AABB in x,z) when near player band
       if (o.z > -this.pL && o.z < this.pL && !o.passed) {
         if (Math.abs(o.x - this.playerX) < (o.w + this.pW) * 0.5 &&

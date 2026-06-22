@@ -10,7 +10,8 @@
   var screens = {};
   var els = {};
   var current = "loading";
-  var settings = { renderScale: "balanced", controlMode: "tilt", muted: false, shadows: true };
+  var settings = { renderScale: "balanced", controlMode: "tilt", muted: false, shadows: true,
+    sensitivity: 1.0, aiTraffic: true, dev: false };
   var toastTimer = null;
 
   // ---- tiny DOM helpers (all guarded) --------------------------------------
@@ -131,11 +132,55 @@
       ["tilt", "Tilt"], ["touch", "Touch"]
     ], "controlMode");
 
+    // tilt sensitivity slider
+    els.sldSens = slider(box, "TILT SENSITIVITY", "sensitivity", 0.3, 3.0, 0.1);
+
     // toggles
     els.tgMute = toggle(box, "MUTE", "muted");
     els.tgShadows = toggle(box, "SHADOWS", "shadows");
+    els.tgAi = toggle(box, "SMART TRAFFIC (AI)", "aiTraffic");
+    els.tgDev = toggle(box, "DEV MODE", "dev");
 
     return box;
+  }
+
+  function fmtSens(v) {
+    var n = Number(v);
+    if (!(n === n)) n = 1; // NaN guard
+    return (Math.round(n * 10) / 10).toFixed(1) + "×";
+  }
+
+  function slider(box, label, key, min, max, step) {
+    var row = add(box, el("div", "set-row"));
+    add(row, el("div", "set-label", label));
+    var wrap = add(row, el("div", "slider-wrap"));
+    var input = el("input", "slider");
+    if (input) {
+      try { input.type = "range"; } catch (e) {}
+      try { input.min = String(min); input.max = String(max); input.step = String(step); } catch (e) {}
+      try { input.value = String(settings[key]); } catch (e) {}
+    }
+    var valLabel = el("div", "slider-val", fmtSens(settings[key]));
+    function onInput() {
+      var v = min;
+      try { v = parseFloat(input.value); } catch (e) {}
+      if (!(v === v)) v = settings[key]; // NaN guard
+      settings[key] = v;
+      setText(valLabel, fmtSens(v));
+      fireSettings();
+    }
+    if (input && input.addEventListener) {
+      try { input.addEventListener("input", onInput); } catch (e) {}
+      try { input.addEventListener("change", onInput); } catch (e) {}
+    }
+    add(wrap, input);
+    add(wrap, valLabel);
+    return { input: input, label: valLabel, min: min, max: max };
+  }
+  function syncSlider(sl, val) {
+    if (!sl) return;
+    if (sl.input) { try { sl.input.value = String(val); } catch (e) {} }
+    setText(sl.label, fmtSens(val));
   }
 
   function segment(box, label, opts, key) {
@@ -179,6 +224,7 @@
     return t;
   }
   function syncToggle(node, on) { if (on) addCls(node, "on"); else rmCls(node, "on"); }
+  function syncDevBadge(on) { if (on) addCls(els.devBadge, "show"); else rmCls(els.devBadge, "show"); }
 
   function fireSettings() {
     try { if (cb.onSettingsChange) cb.onSettingsChange(settings); } catch (e) {}
@@ -192,6 +238,9 @@
     var bal = add(head, el("div", "coin-pill"));
     add(bal, el("span", "coin-ic", "◉"));
     els.garageCoins = add(bal, el("span", "coin-amt", "0"));
+
+    els.devBadge = add(s, el("div", "dev-badge", "DEV — all unlocked"));
+    syncDevBadge(settings.dev);
 
     els.bikeList = add(s, el("div", "bike-list"));
 
@@ -215,6 +264,12 @@
 
     var pause = button("❚❚", "pause-btn", function () { if (cb.onPause) cb.onPause(); });
     add(top, pause);
+
+    // live perf readout (FPS + GPU backend); hidden until setPerf() feeds it
+    var perf = add(s, el("div", "perf hidden"));
+    els.perfFps = add(perf, el("span", "perf-fps", "-- fps"));
+    els.perfBackend = add(perf, el("span", "perf-backend", ""));
+    els.perf = perf;
 
     // speedometer gauge bottom-right
     var gauge = add(s, el("div", "speedo"));
@@ -321,6 +376,7 @@
   }
 
   function setBikes(catalog, owned, selectedId, coinBalance) {
+    syncDevBadge(settings.dev);
     if (coinBalance != null) {
       setText(els.garageCoins, String(coinBalance));
       setText(els.menuCoins, String(coinBalance));
@@ -376,10 +432,38 @@
     if (s.controlMode != null) settings.controlMode = s.controlMode;
     if (s.muted != null) settings.muted = !!s.muted;
     if (s.shadows != null) settings.shadows = !!s.shadows;
+    if (s.sensitivity != null) {
+      var sv = Number(s.sensitivity);
+      if (sv === sv) settings.sensitivity = Math.max(0.3, Math.min(3.0, sv));
+    }
+    if (s.aiTraffic != null) settings.aiTraffic = !!s.aiTraffic;
+    if (s.dev != null) settings.dev = !!s.dev;
     syncSegment(els.segQuality, settings.renderScale);
     syncSegment(els.segControl, settings.controlMode);
+    syncSlider(els.sldSens, settings.sensitivity);
     syncToggle(els.tgMute, settings.muted);
     syncToggle(els.tgShadows, settings.shadows);
+    syncToggle(els.tgAi, settings.aiTraffic);
+    syncToggle(els.tgDev, settings.dev);
+    syncDevBadge(settings.dev);
+  }
+
+  // ---- perf readout (cheap text-node updates; safe no-op if absent) ----------
+  var _lastFps = null, _lastBackend = null;
+  function setPerf(p) {
+    if (!p) return;
+    if (!els.perf) return; // mock / no HUD: harmless no-op
+    if (p.fps != null && p.fps !== _lastFps) {
+      _lastFps = p.fps;
+      var n = Math.round(Number(p.fps));
+      if (!(n === n)) n = 0;
+      setText(els.perfFps, n + " fps");
+    }
+    if (p.backend != null && p.backend !== _lastBackend) {
+      _lastBackend = p.backend;
+      setText(els.perfBackend, String(p.backend));
+    }
+    rmCls(els.perf, "hidden");
   }
 
   // ---- toast ----------------------------------------------------------------
@@ -399,6 +483,7 @@
     setBikes: setBikes,
     setCoins: setCoins,
     setSettings: setSettings,
-    toast: toast
+    toast: toast,
+    setPerf: setPerf
   };
 })();

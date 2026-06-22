@@ -166,6 +166,42 @@ html, body {
 }
 .switch.on .switch-knob { transform: translateX(6.6vw); }
 
+/* tilt sensitivity slider */
+.slider-wrap { display: flex; align-items: center; gap: 3vw; flex: 1; max-width: 56vw; justify-content: flex-end; }
+.slider {
+  -webkit-appearance: none; appearance: none; pointer-events: auto;
+  width: 40vw; max-width: 360px; height: 1.6vh; margin: 0; padding: 0; cursor: pointer;
+  background: rgba(0,0,0,.4); border-radius: 2vh; border: 1px solid var(--panel-b);
+  background-image: linear-gradient(90deg, var(--red), var(--orange) 60%, var(--amber));
+  background-repeat: no-repeat;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 6vw; height: 6vw; max-width: 34px; max-height: 34px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--orange);
+  box-shadow: 0 .3vh 1vh rgba(0,0,0,.5); cursor: pointer;
+}
+.slider::-moz-range-thumb {
+  width: 6vw; height: 6vw; border-radius: 50%;
+  background: #fff; border: 2px solid var(--orange);
+  box-shadow: 0 .3vh 1vh rgba(0,0,0,.5); cursor: pointer;
+}
+.slider::-moz-range-track { background: transparent; height: 1.6vh; }
+.slider-val {
+  font-size: 3.6vw; font-weight: 900; color: var(--amber);
+  min-width: 12vw; text-align: right; font-variant-numeric: tabular-nums;
+}
+
+/* dev badge (garage) */
+.dev-badge {
+  align-self: flex-start; display: none;
+  font-size: 2.8vw; font-weight: 800; letter-spacing: .18em;
+  color: var(--amber); background: rgba(255,212,0,.1);
+  border: 1px solid rgba(255,212,0,.4); border-radius: 6vw;
+  padding: .6vh 4vw; margin-top: -1vh;
+}
+.dev-badge.show { display: inline-block; }
+
 /* ---- garage --------------------------------------------------------------- */
 .scr-garage { justify-content: flex-start; gap: 2vh; }
 .screen-title { font-size: 8vw; font-weight: 900; font-style: italic; letter-spacing: .03em; }
@@ -238,6 +274,19 @@ html, body {
   border-radius: 50%; font-size: 4.4vw; display: flex; align-items: center; justify-content: center;
   background: rgba(8,10,16,.6); border: 1px solid var(--panel-b);
 }
+
+/* live perf readout (FPS + GPU backend) */
+.perf {
+  position: absolute; top: calc(var(--safe-t) + 9vh);
+  left: calc(var(--safe-l) + 4vw);
+  display: flex; flex-direction: column; align-items: flex-start; gap: .2vh;
+  pointer-events: none; font-variant-numeric: tabular-nums;
+  padding: .7vh 3vw; border-radius: 3vw;
+  background: rgba(8,10,16,.45); border: 1px solid var(--panel-b); backdrop-filter: blur(4px);
+}
+.perf.hidden { display: none; }
+.perf-fps { font-size: 3.4vw; font-weight: 900; color: var(--amber); line-height: 1; }
+.perf-backend { font-size: 2.4vw; font-weight: 700; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
 
 .speedo {
   position: absolute; bottom: calc(var(--safe-b) + 3vh); right: calc(var(--safe-r) + 5vw);

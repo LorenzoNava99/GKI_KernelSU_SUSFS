@@ -76,21 +76,49 @@
 
   Render.prototype._buildPipeline = function () {
     var THREE = window.THREE, TSL = window.TSL, GFX = window.MOTOGFX || {};
+    var p = preset(this.settings.renderScale);
+
+    // Tier 1: MRT scene pass -> GTAO ambient occlusion x color -> bloom (highlights only)
     try {
-      this.post = new THREE.PostProcessing(this.renderer);
+      var post = new THREE.PostProcessing(this.renderer);
       var scenePass = TSL.pass(this.scene, this.camera);
-      var p = preset(this.settings.renderScale);
-      var out = scenePass;
-      if (GFX.bloom) {
-        var b = GFX.bloom(scenePass, p.bloom, 0.45, 0.1);
-        out = scenePass.add(b);
+      var normalNode = TSL.normalView || TSL.normal;
+      var wantAO = p.ao && GFX.ao && TSL.mrt && TSL.output && normalNode && scenePass.getTextureNode && scenePass.setMRT;
+      if (wantAO) scenePass.setMRT(TSL.mrt({ output: TSL.output, normal: normalNode }));
+      var color = scenePass.getTextureNode ? scenePass.getTextureNode("output") : scenePass;
+      var lit = color;
+      if (wantAO) {
+        var depth = scenePass.getTextureNode("depth");
+        var nrm = scenePass.getTextureNode("normal");
+        var aoPass = GFX.ao(depth, nrm, this.camera);
+        try { if ("resolutionScale" in aoPass) aoPass.resolutionScale = (this.settings.renderScale === "ultra" ? 1.0 : 0.5); } catch (e) {}
+        lit = aoPass.getTextureNode().mul(color);
       }
-      this.post.outputNode = out;
-      this._scenePass = scenePass;
-    } catch (e) {
-      // pipeline optional: fall back to direct rendering
-      this.post = null;
-    }
+      var outNode = lit;
+      if (GFX.bloom) outNode = lit.add(GFX.bloom(lit, p.bloom, 0.5, 0.82)); // high threshold: only bright pixels bloom
+      post.outputNode = outNode;
+      this.post = post; this._scenePass = scenePass;
+      this._pipeline = wantAO ? "ao+bloom" : "bloom";
+      return;
+    } catch (e1) { try { console.warn("post tier1 failed:", e1 && e1.message); } catch (e) {} }
+
+    // Tier 2: bloom only (proven minimal pipeline)
+    try {
+      var post2 = new THREE.PostProcessing(this.renderer);
+      var sp2 = TSL.pass(this.scene, this.camera);
+      var o2 = sp2;
+      if (GFX.bloom) o2 = sp2.add(GFX.bloom(sp2, p.bloom, 0.5, 0.82));
+      post2.outputNode = o2;
+      this.post = post2; this._scenePass = sp2; this._pipeline = "bloom";
+      return;
+    } catch (e2) { try { console.warn("post tier2 failed:", e2 && e2.message); } catch (e) {} }
+
+    // Tier 3: direct render, no post
+    this.post = null; this._pipeline = "direct";
+  };
+
+  Render.prototype.info = function () {
+    return { backend: this.backend, pipeline: this._pipeline || "?", ratio: this._curRatio };
   };
 
   Render.prototype.resize = function (w, h) {

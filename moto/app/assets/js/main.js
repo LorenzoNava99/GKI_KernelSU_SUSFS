@@ -47,6 +47,7 @@
   var camShake = 0;
   var started = false;
   var lastT = 0;
+  var _fpsAccum = 0, _fpsCount = 0;
 
   // ---- theme helpers --------------------------------------------------------
   function themeIds() {
@@ -173,6 +174,17 @@
     }
 
     if (gfx) gfx.frame(frameMs);
+
+    // live FPS / backend readout (cheap, ~2x/sec)
+    _fpsAccum += frameMs; _fpsCount++;
+    if (_fpsAccum >= 500) {
+      var fps = Math.round(1000 / (_fpsAccum / _fpsCount));
+      _fpsAccum = 0; _fpsCount = 0;
+      if (MOTO.UI && MOTO.UI.setPerf && gfx) {
+        var info = gfx.info ? gfx.info() : { backend: gfx.backend };
+        try { MOTO.UI.setPerf({ fps: fps, backend: (info.backend || "?") + (info.pipeline ? " · " + info.pipeline : "") }); } catch (e) {}
+      }
+    }
   }
 
   // ---- UI callbacks ---------------------------------------------------------

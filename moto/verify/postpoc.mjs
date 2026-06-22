@@ -1,0 +1,11 @@
+import puppeteer from "puppeteer"; import path from "node:path"; import {fileURLToPath} from "node:url";
+const here=path.dirname(fileURLToPath(import.meta.url));
+const url="file://"+path.join(here,"..","app","assets","_poc.html");
+const errs=[];
+const b=await puppeteer.launch({headless:"new",args:["--no-sandbox","--disable-dev-shm-usage","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader","--ignore-gpu-blocklist"]});
+const pg=await b.newPage(); pg.on("pageerror",e=>errs.push("pageerror: "+e.message)); pg.on("console",m=>{if(m.type()==="error")errs.push("console: "+m.text());});
+await pg.goto(url,{waitUntil:"load",timeout:30000});
+await pg.waitForFunction(()=>window.__poc&&(window.__poc.stage==="rendered"||window.__poc.stage==="error"),{timeout:25000}).catch(()=>{});
+const poc=await pg.evaluate(()=>window.__poc);
+console.log("POC:",JSON.stringify(poc)); console.log("errors:",errs.length?errs.slice(0,4):"none");
+await b.close(); process.exit(poc&&poc.stage==="rendered"?0:1);

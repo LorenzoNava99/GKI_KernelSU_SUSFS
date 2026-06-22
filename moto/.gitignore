@@ -7,3 +7,5 @@ verify/node_modules/
 verify/shots/
 verify/package-lock.json
 tools/gfx/node_modules/
+tools/ai/train.log
+tools/ai/run.log

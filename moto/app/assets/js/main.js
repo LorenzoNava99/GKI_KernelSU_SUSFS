@@ -1,6 +1,6 @@
-/* SpeedMoto — bootstrap, render loop, 4K render-scale, persistence, wiring.
- * Owns: renderer, camera, scene root, RAF loop, state machine, settings.
- * Calls into MOTO.{Models,Environment,Controls,Audio,UI,World}. */
+/* SpeedMoto — bootstrap, render loop, persistence, wiring.
+ * Owns the RAF loop, state machine and settings; delegates all rendering to
+ * MOTO.Render (WebGPU/WebGL2). Calls MOTO.{Models,Environment,Controls,Audio,UI,World,AI}. */
 (function () {
   "use strict";
   var MOTO = (window.MOTO = window.MOTO || {});
@@ -13,9 +13,17 @@
     return {
       best: 0,
       coins: 0,
-      owned: null, // filled from catalog starter on first run
+      owned: null,
       selected: null,
-      settings: { renderScale: "balanced", controlMode: "tilt", muted: false, shadows: true }
+      settings: {
+        renderScale: "ultra",      // top-tier device: default to the best preset
+        controlMode: "tilt",
+        muted: false,
+        shadows: true,
+        sensitivity: 1.0,          // tilt sensitivity multiplier
+        aiTraffic: true,           // neural traffic NPCs
+        dev: true                  // DEV MODE ON by default -> all bikes unlocked
+      }
     };
   }
   function loadSave() {
@@ -33,52 +41,12 @@
   var save = loadSave();
 
   // ---- module-local state ---------------------------------------------------
-  var renderer, scene, camera, clock, canvas;
+  var gfx = null, scene = null, camera = null, canvas = null;
   var env = null, world = null;
   var state = "LOADING";
   var camShake = 0;
   var started = false;
-
-  // ---- 4K render scale ------------------------------------------------------
-  // Pixel 9 Pro XL panel is ~1344x2992. We supersample for "4K" crispness and
-  // clamp the drawing buffer so we never exceed GL limits.
-  var MAX_BUFFER_DIM = 3840;
-  function scaleFactor() {
-    switch (save.settings.renderScale) {
-      case "perf": return 0.7;
-      case "ultra": return 1.5; // supersample beyond native -> 4K-class
-      default: return 1.0;      // balanced = native device pixels
-    }
-  }
-  function applyRenderScale() {
-    var dpr = window.devicePixelRatio || 1;
-    var target = dpr * scaleFactor();
-    var w = window.innerWidth, h = window.innerHeight;
-    // clamp so w*ratio and h*ratio stay within MAX_BUFFER_DIM
-    var maxRatio = Math.min(MAX_BUFFER_DIM / Math.max(1, w), MAX_BUFFER_DIM / Math.max(1, h));
-    var ratio = Math.min(target, maxRatio, 4);
-    renderer.setPixelRatio(ratio);
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-
-  // ---- scene ----------------------------------------------------------------
-  function buildRenderer() {
-    canvas = document.getElementById("gl");
-    renderer = new THREE.WebGLRenderer({
-      canvas: canvas, antialias: true, powerPreference: "high-performance",
-      alpha: false, stencil: false
-    });
-    renderer.shadowMap.enabled = !!save.settings.shadows;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    if ("outputColorSpace" in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(74, 1, 0.1, 3000);
-    camera.position.set(0, 4.6, 9.5);
-    clock = new THREE.Clock();
-    applyRenderScale();
-  }
+  var lastT = 0;
 
   // ---- theme helpers --------------------------------------------------------
   function themeIds() {
@@ -98,10 +66,16 @@
     return c[0] || { id: "x", topSpeed: 180, accel: 0.6, handling: 0.6 };
   }
 
+  function allBikeIds() { return catalog().map(function (b) { return b.id; }); }
+
   function ensureOwnership() {
     var c = catalog();
     if (!c.length) return;
-    if (!save.owned || !save.owned.length) save.owned = [c[0].id];
+    if (save.settings.dev) {
+      save.owned = allBikeIds();              // dev mode: everything unlocked
+    } else if (!save.owned || !save.owned.length) {
+      save.owned = [c[0].id];
+    }
     if (!save.selected || save.owned.indexOf(save.selected) < 0) save.selected = save.owned[0];
     persist();
   }
@@ -110,10 +84,15 @@
   function startRun(bikeId) {
     bikeId = bikeId || save.selected;
     teardownRun();
+    // auto-calibrate tilt to however the phone is currently held -> play from any pose
+    try { MOTO.Controls.calibrate(); } catch (e) {}
     var theme = themeForDistance(0);
     env = MOTO.Environment.create(scene, theme);
     var bikeGroup = MOTO.Models.bike(bikeId);
-    world = MOTO.World.create({ scene: scene, env: env, bikeGroup: bikeGroup, stats: statsFor(bikeId) });
+    world = MOTO.World.create({
+      scene: scene, env: env, bikeGroup: bikeGroup, stats: statsFor(bikeId),
+      ai: !!save.settings.aiTraffic
+    });
     world._lastTheme = theme;
     camShake = 0;
     try { MOTO.Audio.init(); if (!save.settings.muted) MOTO.Audio.startEngine(); } catch (e) {}
@@ -147,38 +126,39 @@
   }
 
   // ---- camera ---------------------------------------------------------------
-  var _camTarget = new THREE.Vector3();
+  var _camTarget = null;
   function updateCamera(dt) {
+    if (!_camTarget) _camTarget = new THREE.Vector3();
     var px = world.playerX || 0;
     var speed01 = Math.min(1, world.speed / 90);
-    camShake = world.crashed ? 0 : (0.06 * speed01);
+    camShake = world.crashed ? 0 : (0.05 * speed01);
     var sx = (Math.random() - 0.5) * camShake;
     var sy = (Math.random() - 0.5) * camShake;
     var desired = new THREE.Vector3(px * 0.55 + sx, 4.4 + sy, 9.2 + speed01 * 1.2);
     camera.position.lerp(desired, Math.min(1, dt * 6));
     _camTarget.set(px * 0.75, 1.4, -14);
     camera.lookAt(_camTarget);
-    camera.fov = 74 + speed01 * 10; // speed sensation
+    camera.fov = 74 + speed01 * 10;
     camera.updateProjectionMatrix();
   }
 
   // ---- main loop ------------------------------------------------------------
-  function loop() {
+  function loop(now) {
     requestAnimationFrame(loop);
-    var dt = clock ? Math.min(clock.getDelta(), 0.05) : 0.016;
+    if (!lastT) lastT = now || 0;
+    var frameMs = (now || 0) - lastT; lastT = now || 0;
+    var dt = Math.min(Math.max(frameMs / 1000, 0.0001), 0.05);
 
     if (state === "PLAYING" && world) {
       var input = MOTO.Controls.read();
       world.update(dt, input);
 
-      // theme cycling
       var th = themeForDistance(world.distance);
       if (th !== world._lastTheme) { world._lastTheme = th; try { env.setTheme(th); } catch (e) {} }
 
-      env.update(dt, world.speed, world.distance);
+      try { env.update(dt, world.speed, world.distance); } catch (e) {}
       updateCamera(dt);
 
-      // drain gameplay events for audio / ui
       var ev = world.events; world.events = [];
       for (var i = 0; i < ev.length; i++) {
         if (ev[i] === "coin") { try { if (!save.settings.muted) MOTO.Audio.coin(); } catch (e) {} }
@@ -192,7 +172,7 @@
       if (world.crashed) endRun();
     }
 
-    if (renderer && scene && camera) renderer.render(scene, camera);
+    if (gfx) gfx.frame(frameMs);
   }
 
   // ---- UI callbacks ---------------------------------------------------------
@@ -205,7 +185,7 @@
       onSelectBike: function (id) { if (save.owned.indexOf(id) >= 0) { save.selected = id; persist(); MOTO.UI.setBikes(catalog(), save.owned, save.selected, save.coins); } },
       onBuyBike: function (id) {
         var st = statsFor(id);
-        if (save.owned.indexOf(id) >= 0) return;
+        if (save.owned.indexOf(id) >= 0) { save.selected = id; persist(); MOTO.UI.setBikes(catalog(), save.owned, save.selected, save.coins); return; }
         if (save.coins >= st.price) {
           save.coins -= st.price; save.owned.push(id); save.selected = id; persist();
           MOTO.UI.setBikes(catalog(), save.owned, save.selected, save.coins);
@@ -215,12 +195,14 @@
       },
       onOpenGarage: function () { MOTO.UI.setBikes(catalog(), save.owned, save.selected, save.coins); setState("GARAGE"); },
       onBackToMenu: function () { teardownRun(); setState("MENU"); },
-      onCalibrate: function () { try { MOTO.Controls.calibrate(); MOTO.UI.toast("Tilt calibrated"); } catch (e) {} },
+      onCalibrate: function () { try { MOTO.Controls.calibrate(); MOTO.UI.toast("Tilt calibrated — hold this pose"); } catch (e) {} },
       onSettingsChange: function (s) {
         save.settings = Object.assign(save.settings, s); persist();
         try { MOTO.Controls.setMode(save.settings.controlMode); } catch (e) {}
+        try { if (MOTO.Controls.setSensitivity) MOTO.Controls.setSensitivity(save.settings.sensitivity); } catch (e) {}
         try { MOTO.Audio.setMuted(save.settings.muted); } catch (e) {}
-        if (renderer) { renderer.shadowMap.enabled = !!save.settings.shadows; applyRenderScale(); }
+        if (gfx) { try { gfx.settings.shadows = save.settings.shadows; gfx.applyQuality(save.settings.renderScale); } catch (e) {} }
+        if (save.settings.dev) { ensureOwnership(); MOTO.UI.setBikes(catalog(), save.owned, save.selected, save.coins); }
       }
     };
   }
@@ -228,20 +210,30 @@
   // ---- boot -----------------------------------------------------------------
   function boot() {
     if (started) return; started = true;
-    buildRenderer();
+    canvas = document.getElementById("gl");
     ensureOwnership();
     MOTO.UI.init(buildCallbacks());
     MOTO.UI.setSettings(save.settings);
     MOTO.UI.setBikes(catalog(), save.owned, save.selected, save.coins);
     MOTO.UI.setCoins(save.coins);
-    try { MOTO.Controls.init(renderer.domElement, { onTap: function () {}, onPause: function () { buildCallbacks().onPause(); } }); } catch (e) {}
+    try { MOTO.Controls.init(canvas, { onTap: function () {}, onPause: function () { buildCallbacks().onPause(); } }); } catch (e) {}
     try { MOTO.Controls.setMode(save.settings.controlMode); } catch (e) {}
-    window.addEventListener("resize", function () { if (renderer) applyRenderScale(); });
-    document.addEventListener("visibilitychange", function () {
-      if (document.hidden && state === "PLAYING") buildCallbacks().onPause();
+    try { if (MOTO.Controls.setSensitivity) MOTO.Controls.setSensitivity(save.settings.sensitivity); } catch (e) {}
+
+    gfx = MOTO.Render.create();
+    gfx.init(canvas, save.settings).then(function () {
+      scene = gfx.scene; camera = gfx.camera;
+      gfx.resize(window.innerWidth, window.innerHeight);
+      window.addEventListener("resize", function () { gfx.resize(window.innerWidth, window.innerHeight); });
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden && state === "PLAYING") buildCallbacks().onPause();
+      });
+      setState("MENU");
+      requestAnimationFrame(loop);
+    }).catch(function (err) {
+      try { MOTO.UI.toast("Renderer init failed"); } catch (e) {}
+      try { console.error("Render init failed", err); } catch (e) {}
     });
-    setState("MENU");
-    requestAnimationFrame(loop);
   }
 
   MOTO.App = { boot: boot, _save: function () { return save; } };

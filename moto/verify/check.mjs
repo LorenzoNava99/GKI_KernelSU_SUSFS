@@ -66,7 +66,10 @@ const sandbox = {
   navigator: { userAgent: "node" }, console, Math, Date, JSON, Object, Array, performance: { now: () => Date.now() }
 };
 sandbox.window = sandbox; sandbox.self = sandbox; sandbox.globalThis = sandbox;
-sandbox.AudioContext = function () { return { state: "running", createOscillator: () => makeProxy(), createGain: () => makeProxy(), createBiquadFilter: () => makeProxy(), destination: {}, currentTime: 0, resume() {} }; };
+sandbox.AudioContext = function () { return { state: "running", sampleRate: 44100, createOscillator: () => makeProxy(), createGain: () => makeProxy(), createBiquadFilter: () => makeProxy(), createBuffer: () => ({ getChannelData: () => new Float32Array(8) }), createBufferSource: () => makeProxy(), destination: {}, currentTime: 0, resume() {} }; };
+// WebGPU post-processing nodes (only used at runtime by render.js, which the
+// verifier never boots) — provide a permissive mock so load never throws.
+sandbox.MOTOGFX = new Proxy({ version: "mock" }, { get: (t, p) => (p in t ? t[p] : (() => makeProxy())) });
 vm.createContext(sandbox);
 
 function load(rel) {
@@ -75,8 +78,8 @@ function load(rel) {
   catch (e) { ok("loads " + rel, false, e.message); }
 }
 
-// load modules in the same order as index.html (skip three.min.js — mocked)
-["js/models.js", "js/environment.js", "js/controls.js", "js/audio.js", "js/ui.js", "js/game.js", "js/main.js"].forEach(load);
+// load modules in the same order as index.html (the THREE bundle is mocked)
+["js/models.js", "js/environment.js", "js/controls.js", "js/audio.js", "js/ui.js", "js/render.js", "js/ai.js", "js/game.js", "js/main.js"].forEach(load);
 
 const M = sandbox.MOTO || {};
 // ---- contract surface ------------------------------------------------------
@@ -87,6 +90,9 @@ ok("MOTO.Audio", M.Audio && typeof M.Audio.engine === "function" && typeof M.Aud
 ok("MOTO.UI", M.UI && typeof M.UI.init === "function" && typeof M.UI.setHUD === "function");
 ok("MOTO.World", M.World && typeof M.World.create === "function");
 ok("MOTO.App", M.App && typeof M.App.boot === "function");
+ok("MOTO.Render", M.Render && typeof M.Render.create === "function");
+ok("MOTO.AI", M.AI && typeof M.AI.think === "function" && typeof M.AI.newAgent === "function" && typeof M.AI.available === "function");
+ok("MOTO.Controls.setSensitivity", M.Controls && typeof M.Controls.setSensitivity === "function");
 
 // ---- catalog / kinds -------------------------------------------------------
 let catalog = [], kinds = [], themes = [];
@@ -147,6 +153,29 @@ try {
 // controls.read shape
 try { const r = M.Controls.read(); ok("controls.read shape", typeof r.steer === "number" && typeof r.throttle === "number" && typeof r.brake === "number"); }
 catch (e) { ok("controls.read shape", false, e.message); }
+
+// AI traffic: a run with neural drivers must advance without throwing, and
+// brains must produce varied lane decisions (not all identical).
+try {
+  const bike3 = M.Models.bike(catalog[0].id);
+  const w3 = M.World.create({ scene, env, bikeGroup: bike3, stats: catalog[0], ai: true });
+  ok("AI enabled in world", w3.ai === true);
+  let laneChanges = 0, prevLanes = new Map();
+  for (let i = 0; i < 1200; i++) {
+    w3.update(1 / 60, { steer: Math.sin(i / 25) * 0.5, throttle: 1, brake: 0 });
+    for (const o of w3.traffic) { if (prevLanes.has(o) && prevLanes.get(o) !== o.targetLane) laneChanges++; prevLanes.set(o, o.targetLane); }
+    if (w3.crashed) break;
+  }
+  ok("AI run advances", w3.distance > 30, "dist=" + Math.floor(w3.distance));
+  ok("AI traffic changes lanes (non-static)", laneChanges > 0, "changes=" + laneChanges);
+} catch (e) { ok("AI run advances", false, e.message); }
+
+// AI brains vary by personality (stochastic, not all the same)
+try {
+  const persons = new Set();
+  for (let i = 0; i < 40; i++) { const a = M.AI.newAgent({ lane: 1 }); persons.add(a.person); }
+  ok("AI personalities vary", persons.size >= 2, [...persons].join(","));
+} catch (e) { ok("AI personalities vary", false, e.message); }
 
 // ---- report ----------------------------------------------------------------
 let pass = 0;

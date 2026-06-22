@@ -20,23 +20,31 @@
   var MOTO = (window.MOTO = window.MOTO || {});
 
   // ---- tuning ---------------------------------------------------------------
-  var DEADZONE_DEG = 3;     // degrees of slack around neutral
-  var TILT_RANGE_DEG = 28;  // degrees past deadzone for full lock
-  var SMOOTH = 0.18;        // low-pass coefficient (0..1; higher = snappier)
-  var DEFAULT_NEUTRAL = 12; // assume device rests tilted slightly toward user
+  var DEADZONE_DEG = 2.5;   // degrees of slack around neutral
+  var TILT_RANGE_DEG = 26;  // degrees past deadzone for full lock (scaled by sensitivity)
+  var SMOOTH = 0.22;        // low-pass coefficient (0..1; higher = snappier)
+  var DEFAULT_NEUTRAL = 0;  // gravity-roll neutral is captured by calibration
   var TOUCH_RANGE_PX = 110; // horizontal drag (px) from touch-start for full lock
   var TOUCH_DEAD_PX = 6;    // ignore tiny finger jitter
 
   // ---- state ----------------------------------------------------------------
   var mode = "tilt";
   var cb = {};
+  var sensitivity = 1.0;     // user multiplier (higher = more responsive)
 
-  // tilt
+  // Gravity-projected ROLL (primary): robust at ANY hold pitch, unlike raw gamma
+  // which gimbal-locks near vertical — this is the "play from any position" fix.
+  var haveMotion = false;
+  var curRoll = 0;           // current roll angle (deg) from gravity vector
+  var neutralRoll = 0;       // calibrated neutral roll
+
+  // tilt (DeviceOrientation gamma) — fallback when DeviceMotion is unavailable
   var haveTilt = false;
   var curGamma = 0;          // latest orientation-corrected reading (degrees)
   var neutralGamma = DEFAULT_NEUTRAL;
   var smoothedSteer = 0;     // low-passed steer output (tilt mode)
   var tiltBrake = 0;         // brake from holding lower edge / two fingers in tilt mode
+  var calibratedOnce = false;
 
   // touch
   var touchActive = false;
@@ -78,6 +86,23 @@
     if (e == null || e.gamma == null) return;
     haveTilt = true;
     curGamma = orientedGamma(e);
+  }
+
+  // Gravity-projected roll: the angle the phone is rolled about its screen-normal
+  // axis, derived from the gravity vector in device coordinates. atan2(gx, -gy)
+  // is ~0 in a comfortable viewing pose and swings +/- as you tilt left/right,
+  // and (crucially) stays well-defined whether the phone is held upright or
+  // laid back — so calibration works from ANY position.
+  function onMotion(e) {
+    if (!e) return;
+    var g = e.accelerationIncludingGravity;
+    if (!g || (g.x == null && g.y == null)) return;
+    var gx = num(g.x, 0), gy = num(g.y, 0), gz = num(g.z, 0);
+    // ignore degenerate near-flat samples (phone face-up on a table)
+    if (Math.abs(gx) + Math.abs(gy) < 1.2 && Math.abs(gz) > 9) return;
+    haveMotion = true;
+    curRoll = Math.atan2(gx, -gy) * 180 / Math.PI;
+    if (!calibratedOnce) { neutralRoll = curRoll; calibratedOnce = true; }
   }
 
   // ---- keyboard -------------------------------------------------------------
@@ -168,6 +193,7 @@
     safeAdd(window, "keydown", onKey(true));
     safeAdd(window, "keyup", onKey(false));
     safeAdd(window, "deviceorientation", onOrientation, true);
+    safeAdd(window, "devicemotion", onMotion, true);
 
     var el = dom || window;
     safeAdd(el, "touchstart", onTouchStart, { passive: true });
@@ -177,17 +203,21 @@
   }
 
   // ---- per-frame read -------------------------------------------------------
+  function wrap180(a) { while (a > 180) a -= 360; while (a < -180) a += 360; return a; }
+
   function tiltSteer() {
-    var raw = curGamma - neutralGamma;          // degrees from neutral
+    var raw;
+    if (haveMotion) raw = wrap180(curRoll - neutralRoll);  // gravity roll (primary)
+    else raw = curGamma - neutralGamma;                    // gamma fallback
+    var range = TILT_RANGE_DEG / Math.max(0.3, sensitivity); // higher sens -> smaller range
     var mag = Math.abs(raw);
     var target;
     if (mag <= DEADZONE_DEG) {
       target = 0;
     } else {
       var sign = raw < 0 ? -1 : 1;
-      target = clamp(sign * (mag - DEADZONE_DEG) / TILT_RANGE_DEG, -1, 1);
+      target = clamp(sign * (mag - DEADZONE_DEG) / range, -1, 1);
     }
-    // One-pole low-pass for smoothness.
     smoothedSteer += (target - smoothedSteer) * SMOOTH;
     if (Math.abs(smoothedSteer) < 1e-4) smoothedSteer = 0;
     return clamp(smoothedSteer, -1, 1);
@@ -198,7 +228,7 @@
 
     if (mode === "tilt") {
       throttle = 1; // always accelerating, faithful to the genre
-      if (haveTilt) steer = tiltSteer();
+      if (haveMotion || haveTilt) steer = tiltSteer();
       // Brake gesture in tilt mode (two-finger / bottom-edge touch).
       if (touchActive && touchBrake) brake = 1;
     } else {
@@ -236,9 +266,17 @@
   }
 
   function calibrate() {
-    // Set the current resting tilt as neutral. If we have no reading yet,
-    // keep the sensible default so calibration is harmless.
+    // Capture the current hold as neutral, for BOTH the gravity-roll path
+    // (primary) and the gamma fallback. This is what lets you start a run from
+    // any comfortable pose. Harmless if no reading has arrived yet.
+    if (haveMotion) { neutralRoll = curRoll; calibratedOnce = true; }
     if (haveTilt) neutralGamma = curGamma;
+    smoothedSteer = 0;
+  }
+
+  function setSensitivity(s) {
+    s = num(s, 1.0);
+    sensitivity = clamp(s, 0.3, 3.0);
   }
 
   function requestPermission() {
@@ -260,6 +298,7 @@
     read: read,
     setMode: setMode,
     calibrate: calibrate,
+    setSensitivity: setSensitivity,
     requestPermission: requestPermission
   };
 })();

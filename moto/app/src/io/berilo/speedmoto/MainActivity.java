@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Display;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
@@ -38,6 +39,28 @@ public class MainActivity extends Activity {
                 w.setAttributes(lp);
             } catch (Exception e) { /* ignore on older/odd platforms */ }
         }
+
+        // Request the highest refresh-rate display mode at the native resolution
+        // so requestAnimationFrame can drive 120Hz+ (Android WebView is not 60-capped).
+        try {
+            Display display = getWindowManager().getDefaultDisplay();
+            Display.Mode cur = display.getMode();
+            Display.Mode best = cur;
+            Display.Mode[] modes = display.getSupportedModes();
+            if (modes != null) {
+                for (Display.Mode m : modes) {
+                    if (m.getPhysicalWidth() == cur.getPhysicalWidth()
+                        && m.getPhysicalHeight() == cur.getPhysicalHeight()
+                        && m.getRefreshRate() > best.getRefreshRate()) {
+                        best = m;
+                    }
+                }
+            }
+            WindowManager.LayoutParams lp = w.getAttributes();
+            lp.preferredDisplayModeId = best.getModeId();
+            try { lp.preferredRefreshRate = best.getRefreshRate(); } catch (Throwable t) {}
+            w.setAttributes(lp);
+        } catch (Throwable t) { /* keep default refresh rate */ }
 
         WebView.setWebContentsDebuggingEnabled(false);
         web = new WebView(this);

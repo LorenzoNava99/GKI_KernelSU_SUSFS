@@ -6,3 +6,4 @@ build/speedmoto.apk.idsig
 verify/node_modules/
 verify/shots/
 verify/package-lock.json
+tools/gfx/node_modules/

@@ -41,6 +41,10 @@
     this._coinTimer = 0.6;
     this._t = 0;
 
+    // neural traffic AI (smart, varied drivers); falls back to lane-locked
+    this.ai = !!(opts.ai && MOTO.AI && MOTO.AI.available && MOTO.AI.available());
+    this._aiTimer = 0;
+
     if (this.bike) { this.bike.position.set(0, 0, 0); this.scene.add(this.bike); }
 
     // player collision footprint (m)
@@ -95,11 +99,27 @@
     this._coinTimer -= dt;
     if (this._coinTimer <= 0) { this._coinTimer = 0.5 + Math.random() * 0.9; this._spawnCoins(); }
 
+    // ---- neural traffic AI: periodic decisions ----
+    if (this.ai) {
+      this._aiTimer -= dt;
+      if (this._aiTimer <= 0) { this._aiTimer = 0.12; this._aiThink(dt); }
+    }
+
     // ---- move + collide traffic ----
     var i, o;
     for (i = this.traffic.length - 1; i >= 0; i--) {
       o = this.traffic[i];
-      var closing = this.speed - o.v; // m/s, player overtakes slower traffic
+      // smart drivers ease toward their chosen lane and modulate speed
+      var ev = o.v;
+      if (this.ai) {
+        ev = o.v * (o.speedMul || 1);
+        var tx = this._laneX(o.targetLane != null ? o.targetLane : o.lane);
+        o.x += (tx - o.x) * Math.min(1, dt * 2.2);       // smooth lane change
+        o.group.position.x = o.x;
+        o.group.rotation.y = clamp((tx - o.x) * 0.5, -0.25, 0.25); // bank into change
+        if (Math.abs(o.x - tx) < 0.05) o.lane = o.targetLane != null ? o.targetLane : o.lane;
+      }
+      var closing = this.speed - ev; // m/s, player overtakes slower traffic
       o.z += closing * dt;
       o.group.position.z = o.z;
       // collision (AABB in x,z) when near player band
@@ -134,6 +154,34 @@
 
   World.prototype._laneX = function (lane) { return this.laneCenters[lane]; };
 
+  // Build each driver's local observation and ask its brain for a decision.
+  World.prototype._aiThink = function (dt) {
+    var t = this.traffic;
+    var playerLane = 0, best = 1e9;
+    for (var p = 0; p < this.laneCenters.length; p++) {
+      var d = Math.abs(this.laneCenters[p] - this.playerX);
+      if (d < best) { best = d; playerLane = p; }
+    }
+    for (var i = 0; i < t.length; i++) {
+      var o = t[i];
+      if (!o.brain) continue;
+      var ahead = [];
+      for (var j = 0; j < t.length; j++) {
+        if (j === i) continue;
+        var dz = t[j].z - o.z; // +dz = the other car is behind me in travel terms
+        if (dz > -30 && dz < 60) ahead.push({ lane: t[j].lane, dz: -dz, dv: (t[j].v || 0) - (o.v || 0) });
+      }
+      var act = MOTO.AI.think(o.brain, {
+        lane: o.lane, numLanes: this.numLanes, speed: o.v, maxSpeed: this.maxSpeed,
+        player: { lane: playerLane, dz: o.z }, ahead: ahead, dt: this._aiTimer
+      });
+      if (act) {
+        if (act.targetLane != null) o.targetLane = Math.max(0, Math.min(this.numLanes - 1, act.targetLane));
+        o.speedMul = act.speedMul != null ? act.speedMul : 1;
+      }
+    }
+  };
+
   World.prototype._spawnTraffic = function (diff) {
     var kinds;
     try { kinds = MOTO.Models.trafficKinds(); } catch (e) { kinds = [{ kind: "car", w: 1.8, l: 4.4, h: 1.5, weight: 1 }]; }
@@ -151,8 +199,11 @@
     g.position.set(x, 0, SPAWN_Z - Math.random() * 40);
     this.scene.add(g);
     var trafficSpeed = (8 + Math.random() * 10) + diff * 6; // m/s
+    var brain = null;
+    if (this.ai) { try { brain = MOTO.AI.newAgent({ lane: lane }); } catch (e) { brain = null; } }
     this.traffic.push({ group: g, kind: chosen.kind, lane: lane, x: x,
-      z: g.position.z, v: trafficSpeed, w: chosen.w, l: chosen.l, passed: false });
+      z: g.position.z, v: trafficSpeed, w: chosen.w, l: chosen.l, passed: false,
+      brain: brain, targetLane: lane, speedMul: 1 });
   };
 
   World.prototype._spawnCoins = function () {

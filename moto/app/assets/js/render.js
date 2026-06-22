@@ -46,7 +46,7 @@
       powerPreference: "high-performance", alpha: false, stencil: false
     });
     this.renderer = renderer;
-    try { renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05; } catch (e) {}
+    try { renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15; } catch (e) {}
     try { if ("outputColorSpace" in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace; } catch (e) {}
     try {
       renderer.shadowMap.enabled = !!this.settings.shadows;

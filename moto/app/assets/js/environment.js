@@ -266,13 +266,13 @@
     } catch (e) { renderer = null; }
 
     // ---- Lights -------------------------------------------------------------
-    var hemi = new THREE.HemisphereLight(theme.hemiSky, theme.hemiGround, 0.7);
+    var hemi = new THREE.HemisphereLight(theme.hemiSky, theme.hemiGround, 0.5);
     track(hemi);
 
-    var amb = new THREE.AmbientLight(0xffffff, 0.12);
+    var amb = new THREE.AmbientLight(0xffffff, 0.08);
     track(amb);
 
-    var sun = new THREE.DirectionalLight(theme.sun, 1.5);
+    var sun = new THREE.DirectionalLight(theme.sun, 2.6);
     sun.position.set(theme.sunDir[0], theme.sunDir[1], theme.sunDir[2]);
     sun.castShadow = true;
     if (sun.shadow) {
@@ -308,6 +308,95 @@
     var waterMat = mat(new THREE.MeshStandardMaterial({
       color: theme.ground, roughness: 0.08, metalness: 0.4, transparent: true, opacity: 0.9, envMapIntensity: 1.4
     }));
+
+    // ---- Procedural PBR textures (canvas) -----------------------------------
+    // Guarded: under the verifier (no real canvas) these return null and the
+    // materials keep their flat colour. On device they give the asphalt real
+    // grain + a micro normal map so the road catches light like a surface.
+    function clampB(v) { return v < 0 ? 0 : v > 255 ? 255 : v; }
+    function canvas2d(w, h) {
+      try {
+        if (typeof document === "undefined" || !document.createElement) return null;
+        var c = document.createElement("canvas"); if (!c) return null;
+        c.width = w; c.height = h;
+        var ctx = c.getContext && c.getContext("2d");
+        if (!ctx) return null;
+        return { c: c, ctx: ctx };
+      } catch (e) { return null; }
+    }
+    function texFrom(cnv, rx, ry) {
+      try {
+        var t = new THREE.CanvasTexture(cnv);
+        if (THREE.RepeatWrapping) { t.wrapS = THREE.RepeatWrapping; t.wrapT = THREE.RepeatWrapping; }
+        if (t.repeat && t.repeat.set) t.repeat.set(rx || 1, ry || 1);
+        try { t.anisotropy = 8; } catch (e) {}
+        t.needsUpdate = true;
+        return t;
+      } catch (e) { return null; }
+    }
+    function makeAsphalt() {
+      var a = canvas2d(256, 256); if (!a) return null;
+      var ctx = a.ctx;
+      ctx.fillStyle = "#3a3a42"; ctx.fillRect(0, 0, 256, 256);
+      try {
+        var img = ctx.getImageData(0, 0, 256, 256), d = img.data;
+        for (var i = 0; i < d.length; i += 4) {
+          var n = (Math.random() * 46 - 23) | 0;
+          d[i] = clampB(d[i] + n); d[i + 1] = clampB(d[i + 1] + n); d[i + 2] = clampB(d[i + 2] + n + 2);
+        }
+        ctx.putImageData(img, 0, 0);
+        ctx.strokeStyle = "rgba(18,18,22,0.5)"; ctx.lineWidth = 1;
+        for (var k = 0; k < 7; k++) {
+          ctx.beginPath(); var x = Math.random() * 256, y = Math.random() * 256; ctx.moveTo(x, y);
+          for (var s = 0; s < 5; s++) { x += Math.random() * 44 - 22; y += Math.random() * 44 - 22; ctx.lineTo(x, y); }
+          ctx.stroke();
+        }
+      } catch (e) {}
+      return a.c;
+    }
+    function makeNormal(srcCanvas, strength) {
+      var src = canvas2d(256, 256); if (!src) return null;
+      try { src.ctx.drawImage(srcCanvas, 0, 0, 256, 256); } catch (e) { return null; }
+      var s; try { s = src.ctx.getImageData(0, 0, 256, 256).data; } catch (e) { return null; }
+      var out = canvas2d(256, 256); if (!out) return null;
+      var od; try { od = out.ctx.createImageData(256, 256); } catch (e) { return null; }
+      var o = od.data, st = strength || 2.0;
+      function lum(x, y) { x = (x + 256) & 255; y = (y + 256) & 255; var i = (y * 256 + x) * 4; return (s[i] + s[i + 1] + s[i + 2]) / 765; }
+      for (var y = 0; y < 256; y++) for (var x = 0; x < 256; x++) {
+        var dx = (lum(x - 1, y) - lum(x + 1, y)) * st, dy = (lum(x, y - 1) - lum(x, y + 1)) * st, nz = 1;
+        var len = Math.sqrt(dx * dx + dy * dy + nz * nz) || 1, i = (y * 256 + x) * 4;
+        o[i] = (dx / len * 0.5 + 0.5) * 255; o[i + 1] = (dy / len * 0.5 + 0.5) * 255; o[i + 2] = (nz / len * 0.5 + 0.5) * 255; o[i + 3] = 255;
+      }
+      try { out.ctx.putImageData(od, 0, 0); } catch (e) { return null; }
+      return out.c;
+    }
+    function makeGrain(baseHex, amp, sz) {
+      var a = canvas2d(sz || 128, sz || 128); if (!a) return null;
+      var ctx = a.ctx, hexs = "#" + ("000000" + ((baseHex >>> 0) & 0xffffff).toString(16)).slice(-6);
+      ctx.fillStyle = hexs; ctx.fillRect(0, 0, a.c.width, a.c.height);
+      try {
+        var img = ctx.getImageData(0, 0, a.c.width, a.c.height), d = img.data;
+        for (var i = 0; i < d.length; i += 4) { var n = (Math.random() * amp - amp / 2) | 0; d[i] = clampB(d[i] + n); d[i + 1] = clampB(d[i + 1] + n); d[i + 2] = clampB(d[i + 2] + n); }
+        ctx.putImageData(img, 0, 0);
+      } catch (e) {}
+      return a.c;
+    }
+    // Build & assign the maps (one-time; shared by all recycled segments).
+    try {
+      var asph = makeAsphalt();
+      if (asph) {
+        var amap = texFrom(asph, 3, 4);
+        if (amap) roadMat.map = amap;
+        var anrm = makeNormal(asph, 2.4);
+        var anrmTex = anrm ? texFrom(anrm, 3, 4) : null;
+        if (anrmTex) { roadMat.normalMap = anrmTex; if (roadMat.normalScale && roadMat.normalScale.set) roadMat.normalScale.set(0.6, 0.6); }
+        roadMat.needsUpdate = true;
+      }
+      var grain = makeGrain(0xc4c4c4, 48, 128);  // near-white so material colour tints it
+      if (grain) { var gmap = texFrom(grain, 70, 100); if (gmap) { groundMat.map = gmap; groundMat.needsUpdate = true; } }
+      var shoulderTex = makeGrain(0xb8b8b8, 30, 64);
+      if (shoulderTex) { var smap = texFrom(shoulderTex, 4, 30); if (smap) { shoulderMat.map = smap; shoulderMat.needsUpdate = true; } }
+    } catch (e) {}
 
     // ---- Ground (curved long planes, segmented so the bend is visible) ------
     var GROUND_SEG_LEN = 30;

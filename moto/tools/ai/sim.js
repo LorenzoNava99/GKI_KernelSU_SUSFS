@@ -200,9 +200,9 @@ function episode(flat, seed) {
         const leftClear = c.lane > 0 && gapLeft > gapAhead + 6 && clearLeftBehind > 0.5;
         const rightClear = c.lane < NUM_LANES - 1 && gapRight > gapAhead + 6 && clearRightBehind > 0.5;
         if ((act.lane === -1 && leftClear) || (act.lane === 1 && rightClear)) {
-          reward += 1.2 + 1.5 * c.arch.aggr;       // good overtake
+          reward += 3.0 + 2.5 * c.arch.aggr;       // good overtake (strong)
         } else if (act.lane === 0 && (leftClear || rightClear)) {
-          reward -= 0.4 * c.arch.aggr;             // missed an open overtake
+          reward -= 1.0 + 1.0 * c.arch.aggr;       // missed an open overtake
         }
       }
 
@@ -247,7 +247,7 @@ function episode(flat, seed) {
       // LANE DISCIPLINE: penalise lane changes that weren't needed (no slow car
       // close ahead) — discourages random weaving, encourages purposeful
       // overtakes. Skilful drivers are penalised more for needless changes.
-      if (c._changedThisStep && !c._wasBlocked) reward -= 0.6 * (0.5 + c.arch.skill);
+      if (c._changedThisStep && !c._wasBlocked) reward -= 0.3 * (0.5 + c.arch.skill);
     }
     // pairwise collision / safe-gap reward
     for (let i = 0; i < N_CARS; i++) {

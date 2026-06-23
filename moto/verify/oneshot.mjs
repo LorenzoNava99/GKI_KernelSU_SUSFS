@@ -1,0 +1,17 @@
+import puppeteer from "puppeteer"; import path from "node:path"; import {fileURLToPath} from "node:url";
+const here=path.dirname(fileURLToPath(import.meta.url));
+const url="file://"+path.join(here,"..","app","assets","index.html");
+const b=await puppeteer.launch({headless:"new",args:["--no-sandbox","--disable-dev-shm-usage","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader","--ignore-gpu-blocklist"]});
+const p=await b.newPage();
+await p.setViewport({width:340,height:740,deviceScaleFactor:1});
+await p.evaluateOnNewDocument(()=>{try{localStorage.setItem("moto.save",JSON.stringify({settings:{renderScale:"perf",controlMode:"tilt",muted:true,shadows:true,sensitivity:1,aiTraffic:true,dev:true}}));}catch(e){}});
+const errs=[]; p.on("pageerror",e=>errs.push(e.message));
+await p.goto(url,{waitUntil:"load",timeout:30000});
+await p.waitForFunction(()=>window.MOTO&&window.MOTO.App,{timeout:15000});
+await new Promise(r=>setTimeout(r,800));
+await p.evaluate(()=>{const x=[...document.querySelectorAll("button")].find(b=>/play/i.test(b.textContent)); if(x)x.click();});
+await p.keyboard.down("ArrowUp");
+await new Promise(r=>setTimeout(r,7000));
+await p.screenshot({path:path.join(here,"shots","classic.png")});
+console.log("errors:",errs.length?errs.slice(0,3):"none");
+await b.close();

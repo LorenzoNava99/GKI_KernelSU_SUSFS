@@ -11,10 +11,13 @@
 
   // quality presets: internal pixel-ratio bounds + shadow + effect budget.
   // dpr is multiplied by these; adaptive res moves between min..max to hold fps.
+  // rmax 4 lets us render at the panel's NATIVE device pixels (crisp). The old
+  // values capped below dpr, which is why it looked blurry, not "4K". Adaptive
+  // res only drops toward rmin under sustained load.
   var PRESETS = {
-    perf:     { rmin: 0.55, rmax: 0.9,  shadow: 1024, bloom: 0.22, ao: false, traa: false, target: 120 },
-    balanced: { rmin: 0.7,  rmax: 1.25, shadow: 2048, bloom: 0.32, ao: true,  traa: true,  target: 120 },
-    ultra:    { rmin: 0.85, rmax: 1.8,  shadow: 4096, bloom: 0.45, ao: true,  traa: true,  target: 90  }
+    perf:     { rmin: 0.8, rmax: 4, shadow: 1024, bloom: 0.22, ao: false, traa: false, target: 60 },
+    balanced: { rmin: 1.2, rmax: 4, shadow: 2048, bloom: 0.30, ao: true,  traa: false, target: 60 },
+    ultra:    { rmin: 1.6, rmax: 4, shadow: 4096, bloom: 0.40, ao: true,  traa: false, target: 60 }
   };
   var MAX_BUFFER_DIM = 3840;
 
@@ -102,6 +105,7 @@
       }
       var outNode = lit;
       if (GFX.bloom) outNode = lit.add(GFX.bloom(lit, p.bloom, 0.6, 0.9)); // high threshold: only bright pixels bloom
+      try { if (GFX.fxaa) outNode = GFX.fxaa(outNode); } catch (e) {}       // AA pass (post kills MSAA)
       post.outputNode = outNode;
       this.post = post; this._scenePass = scenePass;
       this._pipeline = wantAO ? "ao+bloom" : "bloom";
@@ -114,6 +118,7 @@
       var sp2 = TSL.pass(this.scene, this.camera);
       var o2 = sp2;
       if (GFX.bloom) o2 = sp2.add(GFX.bloom(sp2, p.bloom, 0.6, 0.9));
+      try { if (GFX.fxaa) o2 = GFX.fxaa(o2); } catch (e) {}
       post2.outputNode = o2;
       this.post = post2; this._scenePass = sp2; this._pipeline = "bloom";
       return;
@@ -140,7 +145,7 @@
     if (this.settings) this.settings.renderScale = name;
     var p = preset(name);
     var dpr = (window.devicePixelRatio || 1);
-    this._curRatio = Math.min(p.rmax, dpr * (name === "ultra" ? 1.0 : 0.9));
+    this._curRatio = Math.min(p.rmax, dpr); // render at native device pixels = crisp
     this._setRatio(this._curRatio);
     try {
       if (this.renderer) {
@@ -166,7 +171,7 @@
     this._emaFrame += (frameMs - this._emaFrame) * 0.1;
     var budget = 1000 / p.target;
     var dpr = (window.devicePixelRatio || 1);
-    var min = p.rmin, max = Math.min(p.rmax, dpr * (this.settings.renderScale === "ultra" ? 1.6 : 1.3));
+    var min = p.rmin, max = Math.min(p.rmax, dpr);
     var r = this._curRatio;
     if (this._emaFrame > budget * 1.12 && r > min) r = Math.max(min, r - 0.06);
     else if (this._emaFrame < budget * 0.82 && r < max) r = Math.min(max, r + 0.03);

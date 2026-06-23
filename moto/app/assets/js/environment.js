@@ -110,20 +110,11 @@
     var theme = themeById(themeId);
     var travelled = 0;       // total distance scrolled — drives the evolving bend
 
-    // Bounded, evolving road curve: ~0 at the player, bending gently ahead, hard
-    // -capped so geometry never flies off; direction slowly evolves as you drive.
-    function curveX(worldZ) {
-      var d = worldZ < 0 ? -worldZ : 0;            // metres ahead of the player
-      var mag = d * d * 0.0004; if (mag > CURVE_MAX) mag = CURVE_MAX;
-      var s = (travelled + d) * 0.0011;            // absolute position along road
-      var dir = Math.sin(s) * 0.8 + Math.sin(s * 0.47 + 1.3) * 0.2;
-      return dir * mag;
-    }
-    function curveY() { return 0; }                // flat — no vertical crests
-    function curveYaw(worldZ) {
-      var dz = 5;
-      return Math.atan2(curveX(worldZ - dz) - curveX(worldZ + dz), 2 * dz);
-    }
+    // Road is a DEAD STRAIGHT vertical ribbon (no bend) — per design. These are
+    // kept as no-ops so the rest of the pipeline (which calls them) stays intact.
+    function curveX() { return 0; }
+    function curveY() { return 0; }
+    function curveYaw() { return 0; }
 
     // Track everything we add to scene + every geometry/material for clean dispose.
     var added = [];
@@ -381,22 +372,12 @@
       } catch (e) {}
       return a.c;
     }
-    // Build & assign the maps (one-time; shared by all recycled segments).
-    try {
-      var asph = makeAsphalt();
-      if (asph) {
-        var amap = texFrom(asph, 3, 4);
-        if (amap) roadMat.map = amap;
-        var anrm = makeNormal(asph, 2.4);
-        var anrmTex = anrm ? texFrom(anrm, 3, 4) : null;
-        if (anrmTex) { roadMat.normalMap = anrmTex; if (roadMat.normalScale && roadMat.normalScale.set) roadMat.normalScale.set(0.6, 0.6); }
-        roadMat.needsUpdate = true;
-      }
-      var grain = makeGrain(0xc4c4c4, 48, 128);  // near-white so material colour tints it
-      if (grain) { var gmap = texFrom(grain, 70, 100); if (gmap) { groundMat.map = gmap; groundMat.needsUpdate = true; } }
-      var shoulderTex = makeGrain(0xb8b8b8, 30, 64);
-      if (shoulderTex) { var smap = texFrom(shoulderTex, 4, 30); if (smap) { shoulderMat.map = smap; shoulderMat.needsUpdate = true; } }
-    } catch (e) {}
+    // NOTE: procedural noise textures were removed — at the road's grazing angle
+    // they alias into "grain"/moiré on real hardware. We keep the asphalt a clean
+    // PBR surface (colour + roughness) which reads crisp at any resolution. The
+    // texture helpers above are retained (unused) for a future properly-mipmapped,
+    // low-frequency detail pass once on-device rendering is confirmed.
+    void texFrom; void makeAsphalt; void makeNormal; void makeGrain;
 
     // ---- Ground (curved long planes, segmented so the bend is visible) ------
     var GROUND_SEG_LEN = 30;

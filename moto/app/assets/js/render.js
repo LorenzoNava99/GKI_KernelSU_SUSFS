@@ -41,8 +41,14 @@
     var useWebGPU = false;
     try { useWebGPU = !!(navigator.gpu); } catch (e) { useWebGPU = false; }
 
+    // NOTE: force the WebGL2 backend for now. It is the exact path verified in
+    // headless, so what we screenshot here matches the device — closing the
+    // blind spot that let a WebGPU-only road-orientation bug ship. WebGPU can be
+    // re-enabled once that backend difference is reproduced and fixed.
+    var FORCE_WEBGL = true;
+
     var renderer = new THREE.WebGPURenderer({
-      canvas: canvas, antialias: true, forceWebGL: !useWebGPU,
+      canvas: canvas, antialias: true, forceWebGL: FORCE_WEBGL || !useWebGPU,
       powerPreference: "high-performance", alpha: false, stencil: false
     });
     this.renderer = renderer;
